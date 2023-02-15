@@ -1,5 +1,6 @@
 package com.nicolebertolo.msbackendforfronted.grpc.client.domain.product;
 
+import com.nicolebertolo.grpc.customerapi.ProductDto;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,6 +19,24 @@ public class ProductResponse {
     private StockInfo stockInfo;
     private LocalDateTime creationDate;
     private LocalDateTime lastUpdatedDate;
+
+    public static ProductResponse toResponse(ProductDto productDto) {
+        return ProductResponse.builder()
+                .id(productDto.getId())
+                .description(productDto.getDescription())
+                .name(productDto.getName())
+                .price(BigDecimal.valueOf(productDto.getPrice()).setScale(2))
+                .identificationCode(productDto.getIdentificationCode())
+                .stockInfo(
+                        StockInfo.builder()
+                                .quantity(productDto.getStockInfoDto().getQuantity())
+                                .supplierId(productDto.getStockInfoDto().getSupplierId())
+                        .build()
+                )
+                .creationDate(LocalDateTime.parse(productDto.getCreationDate()))
+                .lastUpdatedDate(LocalDateTime.parse(productDto.getLastUpdatedDate()))
+                .build();
+    }
 
     @Data
     @Builder
