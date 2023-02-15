@@ -36,7 +36,7 @@
  * ATV-F.004: Implementar a camada de domínio modelados e
    segregar cada domínio em microsserviços diferentes. :heavy_check_mark:
 
-### ATV-M.003 CHANGELOG
+### ATV-M.003 CHANGELOG - ATIVIDADE CONCLUÍDA
 
  * ATV-F.001: Com os modelos de classes e documentos
    elaborados, implantar os modelos nos microsserviços de domínio. :heavy_check_mark:

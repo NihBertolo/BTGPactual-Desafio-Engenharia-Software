@@ -1,0 +1,57 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package com.nicolebertolo.grpc.customerapi;
+
+service OrderServiceAPI {
+  rpc FindOrderById(FindOrderByIdRequest) returns (FindOrderByIdResponse) {}
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
+  rpc FindAllOrders(FindAllOrdersRequest) returns (FindAllOrdersResponse) {}
+}
+
+message FindOrderByIdRequest {
+  string order_id = 1;
+  string tracing = 2;
+}
+
+message FindOrderByIdResponse {
+  OrderDto order_dto = 1;
+}
+
+message CreateOrderRequest {
+  string customer_id = 1;
+  repeated string products_id = 2;
+  string tracing = 3;
+}
+
+message CreateOrderResponse {
+  OrderDto order_dto = 1;
+}
+
+message FindAllOrdersRequest {
+  string tracing = 1;
+}
+
+message FindAllOrdersResponse {
+  repeated OrderDto order_dto = 1;
+}
+
+message OrderDto {
+  string id = 1;
+  string customer_id = 2;
+  OrderDetailsDto order_details_dto = 3;
+  string status = 4;
+  string creationDate = 5;
+  string lastUpdatedDate = 6;
+}
+
+message OrderDetailsDto {
+  double totalAmount = 1;
+  string customer_address = 2;
+  repeated ProductInfoDto product_info_dto = 3;
+}
+
+message ProductInfoDto {
+  double price = 1;
+  string product_id = 2;
+  string product_name = 3;
+}

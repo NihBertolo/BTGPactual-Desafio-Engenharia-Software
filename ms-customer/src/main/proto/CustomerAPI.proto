@@ -5,6 +5,7 @@ package com.nicolebertolo.grpc.customerapi;
 service CustomerServiceAPI {
   rpc FindCustomerById(FindCustomerByIdRequest) returns (FindCustomerByIdResponse) {}
   rpc CreateCustomer(CreateCustomerRequest) returns (CreateCustomerResponse) {}
+  rpc FindAllCustomers(FindAllCustomersRequest) returns (FindAllCustomersResponse) {}
 }
 
 message FindCustomerByIdRequest {
@@ -21,10 +22,19 @@ message CreateCustomerRequest {
   string lastname = 2;
   repeated CustomerDocumentDto customer_document_dto = 3;
   repeated CustomerAddressDto customer_address_dto = 4;
+  string tracing = 5;
 }
 
 message CreateCustomerResponse {
   CustomerDto customer_dto = 1;
+}
+
+message FindAllCustomersRequest {
+  string tracing = 1;
+}
+
+message FindAllCustomersResponse {
+  repeated CustomerDto customer_dto = 1;
 }
 
 message CustomerDto {
