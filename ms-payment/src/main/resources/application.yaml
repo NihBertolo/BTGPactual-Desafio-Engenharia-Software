@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: MS-PAYMENT
+  data:
+    mongodb:
+      user: ${DB_USER}
+      password: ${DB_PASS}
+      uri: ${DB_CONN_STRING}
+server:
+  port: 8083
+rabbitmq:
+  queues:
+    order-created-payment-queue: "order_created_payment_queue"
+    order-received-payment-queue: "order_received_payment_queue"
+  topics:
+    order-created-payment-exchange: "order_created_payment_exchange"
+    order-received-payment-exchange: "order_received_payment_exchange"
+  routingKey: "desafioEngenhariaSoftware"

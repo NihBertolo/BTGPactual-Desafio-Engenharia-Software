@@ -35,3 +35,17 @@
 
  * ATV-F.004: Implementar a camada de domínio modelados e
    segregar cada domínio em microsserviços diferentes. :heavy_check_mark:
+
+### ATV-M.003 CHANGELOG
+
+ * ATV-F.001: Com os modelos de classes e documentos
+   elaborados, implantar os modelos nos microsserviços de domínio. :heavy_check_mark:
+
+ * ATV-F.002: Implementar modelos nas camadas de
+   comunicação de publicadores e consumidores. :heavy_check_mark:
+
+ * ATV-F.003: Gerar e implementar modelos equivalentes em
+   protocol buffers na camada de comunicação gRPC. :heavy_check_mark:
+
+ * ATV-F.004: Implementar modelos para retorno e estímulo da
+   aplicação backend-for-frontend. :heavy_check_mark:
