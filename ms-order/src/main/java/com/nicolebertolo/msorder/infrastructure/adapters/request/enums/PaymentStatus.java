@@ -1,4 +1,4 @@
-package com.nicolebertolo.mspayment.domain.enums;
+package com.nicolebertolo.msorder.infrastructure.adapters.request.enums;
 
 public enum PaymentStatus {
     PENDING(1),
@@ -6,6 +6,6 @@ public enum PaymentStatus {
     CONFIRMED(3),
     CANCELLED(4);
 
-    PaymentStatus(int i) {
+    PaymentStatus(int code) {
     }
 }

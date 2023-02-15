@@ -1,6 +1,6 @@
-package com.nicolebertolo.msorder.domain.models;
+package com.nicolebertolo.msorder.application.domain.models;
 
-import com.nicolebertolo.msorder.domain.enums.OrderStatus;
+import com.nicolebertolo.msorder.application.domain.enums.OrderStatus;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;

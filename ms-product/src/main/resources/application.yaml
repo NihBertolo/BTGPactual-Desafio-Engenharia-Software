@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: MS-ORDER
+  data:
+    mongodb:
+      user: ${DB_USER}
+      password: ${DB_PASS}
+      uri: ${DB_CONN_STRING}
+server:
+  port: 8085

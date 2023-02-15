@@ -1,4 +1,4 @@
-package com.nicolebertolo.msorder.domain.enums;
+package com.nicolebertolo.msorder.application.domain.enums;
 
 
 

@@ -1,4 +1,4 @@
-package com.nicolebertolo.mspayment.domain.enums;
+package com.nicolebertolo.mspayment.application.domain.enums;
 
 public enum PaymentMethod {
     PIX(1),
