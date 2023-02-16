@@ -1,0 +1,60 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package com.nicolebertolo.grpc.customerapi;
+
+service CustomerServiceAPI {
+  rpc FindCustomerById(FindCustomerByIdRequest) returns (FindCustomerByIdResponse) {}
+  rpc CreateCustomer(CreateCustomerRequest) returns (CreateCustomerResponse) {}
+  rpc FindAllCustomers(FindAllCustomersRequest) returns (FindAllCustomersResponse) {}
+}
+
+message FindCustomerByIdRequest {
+  string id = 1;
+  string tracing = 2;
+}
+
+message FindCustomerByIdResponse {
+  CustomerDto customer_dto = 1;
+}
+
+message CreateCustomerRequest {
+  string name = 1;
+  string lastname = 2;
+  repeated CustomerDocumentDto customer_document_dto = 3;
+  repeated CustomerAddressDto customer_address_dto = 4;
+  string tracing = 5;
+}
+
+message CreateCustomerResponse {
+  CustomerDto customer_dto = 1;
+}
+
+message FindAllCustomersRequest {
+  string tracing = 1;
+}
+
+message FindAllCustomersResponse {
+  repeated CustomerDto customer_dto = 1;
+}
+
+message CustomerDto {
+  string id = 1;
+  string name = 2;
+  string lastname = 3;
+  repeated CustomerDocumentDto customer_document_dto = 4;
+  repeated CustomerAddressDto customer_address_dto = 5;
+  string creation_date = 6;
+  string lastUpdateDate = 7;
+}
+
+message CustomerDocumentDto {
+  string document_type = 1;
+  string document_number = 2;
+}
+
+message CustomerAddressDto {
+  string address_name = 1;
+  string country_name = 2;
+  string zip_code = 3;
+  bool is_principal = 4;
+}
