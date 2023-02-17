@@ -6,6 +6,7 @@ service ProductServiceAPI {
   rpc FindProductById(FindProductByIdRequest) returns (FindProductByIdResponse) {}
   rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {}
   rpc FindAllProducts(FindAllProductsRequest) returns (FindAllProductsResponse) {}
+  rpc HandleProductQuantity(HandleProductQuantityRequest) returns (HandleProductQuantityResponse) {}
 }
 
 message FindProductByIdRequest {
@@ -36,6 +37,16 @@ message FindAllProductsRequest {
 
 message FindAllProductsResponse {
   repeated ProductDto product_dto = 1;
+}
+
+message HandleProductQuantityRequest {
+  string product_id = 1;
+  int32 quantity = 2;
+  string tracing = 3;
+}
+
+message HandleProductQuantityResponse {
+  int32 new_quantity = 2;
 }
 
 message ProductDto {

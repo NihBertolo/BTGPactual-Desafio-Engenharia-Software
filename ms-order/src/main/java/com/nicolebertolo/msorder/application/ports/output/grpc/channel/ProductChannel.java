@@ -1,0 +1,52 @@
+package com.nicolebertolo.msorder.application.ports.output.grpc.channel;
+
+import com.nicolebertolo.grpc.customerapi.FindProductByIdRequest;
+import com.nicolebertolo.grpc.customerapi.HandleProductQuantityRequest;
+import com.nicolebertolo.grpc.customerapi.HandleProductQuantityResponse;
+import com.nicolebertolo.grpc.customerapi.ProductServiceAPIGrpc;
+import com.nicolebertolo.msorder.application.ports.output.grpc.component.ProductGrpcClient;
+import com.nicolebertolo.msorder.application.ports.output.grpc.response.ProductResponse;
+import io.grpc.ManagedChannel;
+import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.lang.invoke.MethodHandles;
+
+import static com.nicolebertolo.msorder.application.ports.output.grpc.response.ProductResponse.toResponse;
+
+@Service
+public class ProductChannel {
+
+    @Autowired
+    private ProductGrpcClient productGrpcClient;
+
+    private ManagedChannel channel = this.productGrpcClient.getChannel();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    public ProductResponse findProductById(String productId, String tracing) {
+        LOGGER.info("[ProductChannel.findProductById] - Init GRPC Communication");
+        val findProductByIdRequest = FindProductByIdRequest.newBuilder()
+                .setProductId(productId)
+                .setTracing(tracing)
+                .build();
+
+        return toResponse(ProductServiceAPIGrpc.newBlockingStub(channel)
+                .findProductById(findProductByIdRequest).getProductDto());
+    }
+
+    public HandleProductQuantityResponse handleProductQuantity(String productId, Integer quantity, String tracing) {
+        LOGGER.info("[ProductChannel.handleProductQuantity] - Init GRPC Communication");
+
+        val handleProductQuantityRequest = HandleProductQuantityRequest.newBuilder()
+                .setProductId(productId)
+                .setQuantity(quantity)
+                .setTracing(tracing)
+                .build();
+
+        return ProductServiceAPIGrpc.newBlockingStub(channel).handleProductQuantity(handleProductQuantityRequest);
+    }
+}

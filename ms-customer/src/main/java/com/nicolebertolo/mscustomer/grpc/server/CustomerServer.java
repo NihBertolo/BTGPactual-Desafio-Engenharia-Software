@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
@@ -81,7 +80,7 @@ public class CustomerServer extends CustomerServiceAPIImplBase {
             StreamObserver<CreateCustomerResponse> responseObserver
     ) {
         try {
-            LOGGER.info("[CustomerServer.createCustomer] - Creating customer by Id, tracing: " + request.getTracing());
+            LOGGER.info("[CustomerServer.createCustomer] - Creating customer, tracing: " + request.getTracing());
             val customerRequest = CustomerRequest.builder()
                     .name(request.getName())
                     .lastname(request.getLastname())
