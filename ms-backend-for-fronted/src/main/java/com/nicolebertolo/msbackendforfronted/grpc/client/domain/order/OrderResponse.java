@@ -3,7 +3,6 @@ package com.nicolebertolo.msbackendforfronted.grpc.client.domain.order;
 import com.nicolebertolo.grpc.customerapi.OrderDto;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 public class OrderResponse {
 
     private String id;
-    @Indexed
+
     private String customerId;
     private OrderDetails details;
     private String status;

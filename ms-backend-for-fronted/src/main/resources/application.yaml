@@ -1,11 +1,6 @@
 spring:
   application:
     name: MS-BACKEND-FOR-FRONTEND
-  data:
-    mongodb:
-      user: ${DB_USER}
-      password: ${DB_PASS}
-      uri: ${DB_CONN_STRING}
 server:
   port: 8081
 grpc:

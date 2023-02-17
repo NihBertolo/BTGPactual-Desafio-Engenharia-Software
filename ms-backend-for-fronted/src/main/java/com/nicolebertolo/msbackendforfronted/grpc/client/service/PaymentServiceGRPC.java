@@ -1,14 +1,14 @@
 package com.nicolebertolo.msbackendforfronted.grpc.client.service;
 
 import com.nicolebertolo.grpc.customerapi.*;
-import com.nicolebertolo.msbackendforfronted.grpc.client.component.PaymentGrpcClient;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.payment.PaymentRequest;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.payment.PaymentResponse;
 import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -20,10 +20,16 @@ import static com.nicolebertolo.msbackendforfronted.grpc.client.domain.payment.P
 @Service
 public class PaymentServiceGRPC extends PaymentServiceAPIGrpc.PaymentServiceAPIImplBase {
 
-    @Autowired
-    private PaymentGrpcClient paymentGrpcClient;
+    @Value("${grpc.clients.order.address}")
+    private static final String address = "";
 
-    private ManagedChannel channel = this.paymentGrpcClient.getChannel();
+    @Value("${grpc.clients.order.port}")
+    private static final int port = 0;
+
+    private ManagedChannel getChannel() {
+        return ManagedChannelBuilder.forAddress(address, port).usePlaintext().build();
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public PaymentResponse findPaymentById(String paymentId, String tracing) {
@@ -33,7 +39,7 @@ public class PaymentServiceGRPC extends PaymentServiceAPIGrpc.PaymentServiceAPII
                 .setTracing(tracing)
                 .build();
 
-        return toResponse(PaymentServiceAPIGrpc.newBlockingStub(channel)
+        return toResponse(PaymentServiceAPIGrpc.newBlockingStub(this.getChannel())
                 .findPaymentById(findPaymentByIdRequest)
                 .getPaymentDto()
         );
@@ -48,7 +54,7 @@ public class PaymentServiceGRPC extends PaymentServiceAPIGrpc.PaymentServiceAPII
                 .setTracing(tracing)
                 .build();
 
-        return toResponse(PaymentServiceAPIGrpc.newBlockingStub(channel)
+        return toResponse(PaymentServiceAPIGrpc.newBlockingStub(this.getChannel())
                 .postPaymentById(postPaymentRequest).getPaymentDto());
     }
 
@@ -58,7 +64,7 @@ public class PaymentServiceGRPC extends PaymentServiceAPIGrpc.PaymentServiceAPII
                 .setTracing(tracing)
                 .build();
 
-        return PaymentServiceAPIGrpc.newBlockingStub(channel)
+        return PaymentServiceAPIGrpc.newBlockingStub(this.getChannel())
                 .findAllPayments(findAllPaymentsRequest)
                 .getPaymentDtoList().stream().map(PaymentResponse::toResponse).collect(Collectors.toList());
     }

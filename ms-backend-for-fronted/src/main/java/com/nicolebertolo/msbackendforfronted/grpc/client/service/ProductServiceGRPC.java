@@ -1,14 +1,14 @@
 package com.nicolebertolo.msbackendforfronted.grpc.client.service;
 
 import com.nicolebertolo.grpc.customerapi.*;
-import com.nicolebertolo.msbackendforfronted.grpc.client.component.ProductGrpcClient;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductRequest;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductResponse;
 import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -20,10 +20,15 @@ import static com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.P
 @Service
 public class ProductServiceGRPC {
 
-    @Autowired
-    private ProductGrpcClient productGrpcClient;
+    @Value("${grpc.clients.product.address}")
+    private static final String address = "";
 
-    private ManagedChannel channel = this.productGrpcClient.getChannel();
+    @Value("${grpc.clients.product.port}")
+    private static final int port = 0;
+
+    public ManagedChannel getChannel() {
+        return ManagedChannelBuilder.forAddress(address, port).usePlaintext().build();
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -34,7 +39,7 @@ public class ProductServiceGRPC {
                 .setTracing(tracing)
                 .build();
 
-        return toResponse(ProductServiceAPIGrpc.newBlockingStub(channel)
+        return toResponse(ProductServiceAPIGrpc.newBlockingStub(this.getChannel())
                 .findProductById(findProductByIdRequest).getProductDto());
     }
 
@@ -53,7 +58,7 @@ public class ProductServiceGRPC {
                 .setTracing(tracing)
                 .build();
 
-        return toResponse(ProductServiceAPIGrpc.newBlockingStub(channel)
+        return toResponse(ProductServiceAPIGrpc.newBlockingStub(this.getChannel())
                 .createProduct(createProductRequest).getProductDto());
     }
 
@@ -61,7 +66,7 @@ public class ProductServiceGRPC {
         LOGGER.info("[ProductServiceGRPC.findAllProducts] - Init GRPC Communication");
         val findAllProductsRequest = FindAllProductsRequest.newBuilder().setTracing(tracing).build();
 
-        return ProductServiceAPIGrpc.newBlockingStub(channel)
+        return ProductServiceAPIGrpc.newBlockingStub(this.getChannel())
                 .findAllProducts(findAllProductsRequest)
                 .getProductDtoList().stream().map(ProductResponse::toResponse).collect(Collectors.toList());
     }

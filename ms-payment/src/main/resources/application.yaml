@@ -3,9 +3,9 @@ spring:
     name: MS-PAYMENT
   data:
     mongodb:
-      user: ${DB_USER}
-      password: ${DB_PASS}
-      uri: ${DB_CONN_STRING}
+      user: desafio
+      password: engenharia
+      database: desafio_engenharia
 server:
   port: 8083
 rabbitmq:
@@ -16,3 +16,6 @@ rabbitmq:
     order-created-payment-exchange: "order_created_payment_exchange"
     order-received-payment-exchange: "order_received_payment_exchange"
   routingKey: "desafioEngenhariaSoftware"
+grpc:
+  server:
+    port: 4006

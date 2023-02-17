@@ -2,7 +2,6 @@ package com.nicolebertolo.mscustomer.grpc.server;
 
 
 import com.nicolebertolo.grpc.customerapi.*;
-import com.nicolebertolo.grpc.customerapi.CustomerServiceAPIGrpc.CustomerServiceAPIImplBase;
 import com.nicolebertolo.mscustomer.domain.models.Address;
 import com.nicolebertolo.mscustomer.domain.models.CustomerDocument;
 import com.nicolebertolo.mscustomer.grpc.server.request.CustomerRequest;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 
 @GrpcService
-public class CustomerServer extends CustomerServiceAPIImplBase {
+public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceAPIImplBase {
 
     @Autowired
     private CustomerService customerService;

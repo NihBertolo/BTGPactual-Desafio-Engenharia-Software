@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 
 @GrpcService
-public class ProductServer extends ProductServiceAPIImplBase {
+public class ProductGrpcService extends ProductServiceAPIImplBase {
 
     @Autowired
     private ProductService productService;

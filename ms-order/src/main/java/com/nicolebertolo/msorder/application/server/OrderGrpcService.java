@@ -1,7 +1,7 @@
-package com.nicolebertolo.msorder.application.ports.input.grpc;
+package com.nicolebertolo.msorder.application.server;
 
-import com.google.protobuf.ProtocolStringList;
 import com.nicolebertolo.grpc.customerapi.*;
+import com.nicolebertolo.msorder.application.ports.input.grpc.OrderServerUseCase;
 import com.nicolebertolo.msorder.application.service.OrderService;
 import com.nicolebertolo.msorder.infrastructure.adapters.request.OrderRequest;
 import io.grpc.Status;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 
 @GrpcService
-public class OrderServer extends OrderServiceAPIGrpc.OrderServiceAPIImplBase {
+public class OrderGrpcService extends OrderServiceAPIGrpc.OrderServiceAPIImplBase implements OrderServerUseCase {
 
     @Autowired
     private OrderService orderService;

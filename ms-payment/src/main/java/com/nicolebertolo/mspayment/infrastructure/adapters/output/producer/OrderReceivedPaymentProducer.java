@@ -1,7 +1,7 @@
-package com.nicolebertolo.msorder.infrastructure.adapters.output.producer;
+package com.nicolebertolo.mspayment.infrastructure.adapters.output.producer;
 
-import com.nicolebertolo.msorder.infrastructure.adapters.MessageTemplate;
-import com.nicolebertolo.msorder.infrastructure.adapters.request.PaymentCreatedMessage;
+import com.nicolebertolo.mspayment.infrastructure.adapters.MessageTemplate;
+import com.nicolebertolo.mspayment.infrastructure.adapters.request.PaymentReceivedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.lang.invoke.MethodHandles;
 
 @Component
-public class OrderCreatedPaymentProducer {
+public class OrderReceivedPaymentProducer {
 
     @Autowired
     private RabbitTemplate template;
@@ -25,7 +25,7 @@ public class OrderCreatedPaymentProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public void produceMessage(MessageTemplate<PaymentCreatedMessage> payload) {
+    public void produceMessage(MessageTemplate<PaymentReceivedMessage> payload) {
         LOGGER.info("[OrderCreatedPaymentProducer.produceMessage] - Sending message, tracing:" +payload.getTracing());
 
         this.template.convertAndSend(CREATED_TOPIC, ROUTING_KEY, payload);

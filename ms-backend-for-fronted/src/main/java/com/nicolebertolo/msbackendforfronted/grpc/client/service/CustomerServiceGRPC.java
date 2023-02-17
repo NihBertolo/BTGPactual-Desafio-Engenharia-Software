@@ -2,13 +2,13 @@ package com.nicolebertolo.msbackendforfronted.grpc.client.service;
 
 
 import com.nicolebertolo.grpc.customerapi.*;
-import com.nicolebertolo.msbackendforfronted.grpc.client.component.CustomerGrpcClient;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.customer.CustomerRequest;
 import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
@@ -17,9 +17,15 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerServiceGRPC {
 
-    @Autowired
-    private CustomerGrpcClient customerGrpcClient;
-    private ManagedChannel channel = this.customerGrpcClient.getChannel();
+    @Value("${grpc.clients.customer.address}")
+    private static final String address = "";
+
+    @Value("${grpc.clients.customer.port}")
+    private static final int port = 0;
+
+    private ManagedChannel getChannel() {
+        return ManagedChannelBuilder.forAddress(address, port).usePlaintext().build();
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -30,7 +36,7 @@ public class CustomerServiceGRPC {
                 .setTracing(tracing)
                 .build();
 
-        return CustomerServiceAPIGrpc.newBlockingStub(channel).findCustomerById(findCustomerByIdRequest);
+        return CustomerServiceAPIGrpc.newBlockingStub(this.getChannel()).findCustomerById(findCustomerByIdRequest);
     }
 
     public CreateCustomerResponse createCustomer(CustomerRequest customerRequest, String tracing) {
@@ -56,7 +62,7 @@ public class CustomerServiceGRPC {
                 ).collect(Collectors.toList()))
                 .build();
 
-        return CustomerServiceAPIGrpc.newBlockingStub(channel).createCustomer(createCustomerRequest);
+        return CustomerServiceAPIGrpc.newBlockingStub(this.getChannel()).createCustomer(createCustomerRequest);
     }
 
     public FindAllCustomersResponse findAllCustomers(String tracing) {
@@ -66,7 +72,7 @@ public class CustomerServiceGRPC {
                 .setTracing(tracing)
                 .build();
 
-        return CustomerServiceAPIGrpc.newBlockingStub(channel).findAllCustomers(findAllCustomersRequest);
+        return CustomerServiceAPIGrpc.newBlockingStub(this.getChannel()).findAllCustomers(findAllCustomersRequest);
     }
 
 }

@@ -1,10 +1,13 @@
-spring:
+sprincg:
   application:
     name: MS-CUSTOMER
   data:
     mongodb:
-      user: ${DB_USER}
-      password: ${DB_PASS}
-      uri: ${DB_CONN_STRING}
+      user: desafio
+      password: engenharia
+      database: desafio_engenharia
 server:
   port: 8085
+grpc:
+  server:
+    port: 4004
