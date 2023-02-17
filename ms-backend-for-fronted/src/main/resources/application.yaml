@@ -1,19 +1,22 @@
 spring:
   application:
     name: MS-BACKEND-FOR-FRONTEND
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 server:
   port: 8081
 grpc:
   clients:
     customer:
-      address: "http://localhost/"
+      address: localhost
       port: 4004
     order:
-      address: "http://localhost/"
+      address: localhost
       port: 4005
     payment:
-      address: "http://localhost/"
+      address: localhost
       port: 4006
     product:
-      address: "http://localhost/"
+      address: localhost
       port: 4007

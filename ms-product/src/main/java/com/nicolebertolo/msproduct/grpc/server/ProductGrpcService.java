@@ -52,7 +52,6 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
                                                     .build()
                                     )
                                     .setCreationDate(product.getCreationDate().toString())
-                                    .setLastUpdatedDate(product.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
 
@@ -101,7 +100,6 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
                                                     .build()
                                     )
                                     .setCreationDate(product.getCreationDate().toString())
-                                    .setLastUpdatedDate(product.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
 
@@ -141,7 +139,6 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
                                                             .build()
                                             )
                                             .setCreationDate(product.getCreationDate().toString())
-                                            .setLastUpdatedDate(product.getLastUpdatedDate().toString())
                                             .build()
                             ).collect(Collectors.toList())
                     ).build();

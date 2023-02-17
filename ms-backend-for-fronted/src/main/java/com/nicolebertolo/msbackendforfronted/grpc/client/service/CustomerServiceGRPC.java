@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 public class CustomerServiceGRPC {
 
     @Value("${grpc.clients.customer.address}")
-    private static final String address = "";
+    private String address;
 
     @Value("${grpc.clients.customer.port}")
-    private static final int port = 0;
+    private int port;
 
     private ManagedChannel getChannel() {
         return ManagedChannelBuilder.forAddress(address, port).usePlaintext().build();

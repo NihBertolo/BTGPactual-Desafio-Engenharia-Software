@@ -60,7 +60,6 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
                                             ).collect(Collectors.toList())
                                     )
                                     .setCreationDate(customer.getCreationDate().toString())
-                                    .setLastUpdateDate(customer.getLastUpdateDate().toString())
                     ).build();
             LOGGER.info("[CustomerServer.findCustomerById] - Found Customer by Id, tracing: " + request.getTracing());
             responseObserver.onNext(customerResponse);
@@ -122,7 +121,6 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
                                             ).collect(Collectors.toList())
                                     )
                                     .setCreationDate(customer.getCreationDate().toString())
-                                    .setLastUpdateDate(customer.getLastUpdateDate().toString())
                     ).build();
             LOGGER.info("[CustomerServer.createCustomer] - Customer created with Id: " + customer.getId()
                     + ", tracing: " + request.getTracing());
@@ -167,7 +165,6 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
                                                             .build()
                                             ).collect(Collectors.toList()))
                                             .setCreationDate(customer.getCreationDate().toString())
-                                            .setLastUpdateDate(customer.getLastUpdateDate().toString())
                                             .build()
                             ).collect(Collectors.toList())
                     ).build();

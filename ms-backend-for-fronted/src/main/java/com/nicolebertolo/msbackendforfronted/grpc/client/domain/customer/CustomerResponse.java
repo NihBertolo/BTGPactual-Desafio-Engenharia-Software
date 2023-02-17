@@ -39,7 +39,6 @@ public class CustomerResponse {
                                 .build()
                 ).collect(Collectors.toList()))
                 .creationDate(LocalDateTime.parse(customerDto.getCreationDate()))
-                .lastUpdateDate(LocalDateTime.parse(customerDto.getLastUpdateDate()))
                 .build();
     }
 

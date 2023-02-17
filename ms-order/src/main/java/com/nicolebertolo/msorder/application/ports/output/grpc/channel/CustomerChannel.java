@@ -16,10 +16,10 @@ import java.lang.invoke.MethodHandles;
 public class CustomerChannel {
 
     @Value("${grpc.clients.customer.address}")
-    private static final String address = "";
+    private String address;
 
     @Value("${grpc.clients.customer.port}")
-    private static final int port = 0;
+    private int port;
 
     public ManagedChannel getChannel() {
         return ManagedChannelBuilder.forAddress(address, port).usePlaintext().build();

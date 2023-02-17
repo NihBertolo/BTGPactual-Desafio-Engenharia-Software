@@ -56,7 +56,6 @@ public class OrderGrpcService extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
                                                     ).build())
                                     .setStatus(order.getStatus().toString())
                                     .setCreationDate(order.getCreationDate().toString())
-                                    .setLastUpdatedDate(order.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
             LOGGER.info("[OrderServer.findCustomerById] - Order found by Id, tracing: " + request.getTracing());
@@ -107,7 +106,6 @@ public class OrderGrpcService extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
                                                     ).build())
                                     .setStatus(order.getStatus().toString())
                                     .setCreationDate(order.getCreationDate().toString())
-                                    .setLastUpdatedDate(order.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
 
@@ -153,7 +151,6 @@ public class OrderGrpcService extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
                                                                 ).build())
                                                 .setStatus(order.getStatus().toString())
                                                 .setCreationDate(order.getCreationDate().toString())
-                                                .setLastUpdatedDate(order.getLastUpdatedDate().toString())
                                                 .build()
                                 ).collect(Collectors.toList()
                         )).build();

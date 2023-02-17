@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +42,7 @@ public class ProductService {
                         .price(productRequest.getPrice())
                         .identificationCode(productRequest.getIdentificationCode())
                         .stockInfo(productRequest.getStockInfo())
+                        .creationDate(LocalDateTime.now())
                         .build()
         );
 

@@ -77,6 +77,7 @@ public class PaymentService {
                         .status(PaymentStatus.PENDING)
                         .method(null)
                         .additionalInfo(paymentRequest.getAdditionalInfo())
+                        .creationDate(LocalDateTime.now())
                         .build()
         );
 

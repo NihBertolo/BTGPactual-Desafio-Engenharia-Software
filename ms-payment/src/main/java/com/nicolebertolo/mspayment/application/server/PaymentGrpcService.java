@@ -47,7 +47,6 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
                                     .setMethod(payment.getMethod().toString())
                                     .setStatus(payment.getStatus().toString())
                                     .setCreationDate(payment.getCreationDate().toString())
-                                    .setLastUpdatedDate(payment.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
 
@@ -85,7 +84,6 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
                                     .setMethod(payment.getMethod().toString())
                                     .setStatus(payment.getStatus().toString())
                                     .setCreationDate(payment.getCreationDate().toString())
-                                    .setLastUpdatedDate(payment.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
 
@@ -120,7 +118,6 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
                                             .setMethod(payment.getMethod().toString())
                                             .setStatus(payment.getStatus().toString())
                                             .setCreationDate(payment.getCreationDate().toString())
-                                            .setLastUpdatedDate(payment.getLastUpdatedDate().toString())
                                             .build()
                             ).collect(Collectors.toList())
                     ).build();

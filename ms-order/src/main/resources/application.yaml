@@ -19,3 +19,16 @@ rabbitmq:
 grpc:
   server:
     port: 4005
+  clients:
+    customer:
+      address: localhost
+      port: 4004
+    order:
+      address: localhost
+      port: 4005
+    payment:
+      address: localhost
+      port: 4006
+    product:
+      address: localhost
+      port: 4007

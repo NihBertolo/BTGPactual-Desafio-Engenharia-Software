@@ -21,10 +21,10 @@ import static com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.P
 public class ProductServiceGRPC {
 
     @Value("${grpc.clients.product.address}")
-    private static final String address = "";
+    private String address;
 
     @Value("${grpc.clients.product.port}")
-    private static final int port = 0;
+    private int port;
 
     public ManagedChannel getChannel() {
         return ManagedChannelBuilder.forAddress(address, port).usePlaintext().build();

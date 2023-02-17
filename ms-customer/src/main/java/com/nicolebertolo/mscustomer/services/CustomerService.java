@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,9 +38,10 @@ public class CustomerService {
                         .lastname(customerRequest.getLastname())
                         .documents(customerRequest.getDocuments())
                         .addresses(customerRequest.getAddresses())
+                        .creationDate(LocalDateTime.now())
                         .build()
         );
-        LOGGER.info("[CustomerService.createCustomer] - A new customer with id: " + customer.getId() + " has been created");
+        LOGGER.info("[CustomerService.createCustomer] - A new customer with id: " + customer.getId() + " has been created" +customer.getCreationDate());
         return customer;
     }
 

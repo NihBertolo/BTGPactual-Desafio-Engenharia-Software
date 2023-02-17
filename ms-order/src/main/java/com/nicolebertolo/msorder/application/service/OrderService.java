@@ -86,6 +86,7 @@ public class OrderService {
                                         .items(products)
                                         .build())
                         .status(OrderStatus.PENDING_PAYMENT)
+                        .creationDate(LocalDateTime.now())
                         .build()
         );
 

@@ -24,10 +24,10 @@ import static com.nicolebertolo.msbackendforfronted.grpc.client.domain.order.Ord
 public class OrderServiceGRPC extends OrderServiceAPIGrpc.OrderServiceAPIImplBase {
 
     @Value("${grpc.clients.order.address}")
-    private static final String address = "";
+    private String address;
 
     @Value("${grpc.clients.order.port}")
-    private static final int port = 0;
+    private int port;
 
     private ManagedChannel getChannel() {
         return ManagedChannelBuilder.forAddress(address, port).usePlaintext().build();
