@@ -5,9 +5,11 @@ import com.nicolebertolo.msorder.application.domain.models.OrderDetails;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 public class OrderRequest {
     private String customerId;
-    private OrderDetails details;
+    private List<String> productsIds;
 }

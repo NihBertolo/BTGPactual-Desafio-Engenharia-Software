@@ -1,4 +1,4 @@
-package com.nicolebertolo.msbackendforfronted.grpc.client.domain.product;
+package com.nicolebertolo.msorder.application.ports.output.grpc.response;
 
 import com.nicolebertolo.grpc.customerapi.ProductDto;
 import lombok.Builder;

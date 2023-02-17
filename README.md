@@ -36,7 +36,7 @@
  * ATV-F.004: Implementar a camada de domínio modelados e
    segregar cada domínio em microsserviços diferentes. :heavy_check_mark:
 
-### ATV-M.003 CHANGELOG
+### ATV-M.003 CHANGELOG - ATIVIDADE CONCLUÍDA :heavy_check_mark:
 
  * ATV-F.001: Com os modelos de classes e documentos
    elaborados, implantar os modelos nos microsserviços de domínio. :heavy_check_mark:
@@ -49,3 +49,15 @@
 
  * ATV-F.004: Implementar modelos para retorno e estímulo da
    aplicação backend-for-frontend. :heavy_check_mark:
+
+### ATV-M.004 CHANGELOG - ATIVIDADE CONCLUIDA :heavy_check_mark:
+
+ * ATV-F.001(laranja): Desenvolver camadas de serviço e camadas de
+ interface repository para acesso em microsserviços em arquitetura limpa. :heavy_check_mark:
+
+ * ATV-F.002(laranja): Desenvolver camadas de use-case, ports e
+ interface repository para acesso em microsserviços em arquitetura :heavy_check_mark:
+ hexagonal.
+
+ * ATV-F.003(laranja): Desenvolver camadas de implementação de APIs
+ gRPC no arquivo protocol buffers :heavy_check_mark:

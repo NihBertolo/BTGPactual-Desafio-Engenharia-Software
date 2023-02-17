@@ -1,6 +1,6 @@
-spring:
+sprincg:
   application:
-    name: MS-PRODUCT
+    name: MS-CUSTOMER
   data:
     mongodb:
       user: desafio
@@ -10,4 +10,4 @@ server:
   port: 8085
 grpc:
   server:
-    port: 4007
+    port: 4004

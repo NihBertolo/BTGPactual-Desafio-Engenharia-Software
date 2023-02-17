@@ -1,0 +1,48 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package com.nicolebertolo.grpc.customerapi;
+
+service PaymentServiceAPI {
+  rpc FindPaymentById(FindPaymentByIdRequest) returns (FindPaymentByIdResponse) {}
+  rpc PostPaymentById(PostPaymentByIdRequest) returns (PostPaymentByIdResponse) {}
+  rpc FindAllPayments(FindAllPaymentsRequest) returns (FindAllPaymentsResponse) {}
+}
+
+message FindPaymentByIdRequest {
+  string payment_id = 1;
+  string tracing = 2;
+}
+
+message FindPaymentByIdResponse {
+  PaymentDto payment_dto = 1;
+}
+
+message PostPaymentByIdRequest {
+  string payment_id = 1;
+  string method = 2;
+  string status = 3;
+  string tracing = 4;
+}
+
+message PostPaymentByIdResponse {
+  PaymentDto payment_dto = 1;
+}
+
+message FindAllPaymentsRequest {
+  string tracing = 1;
+}
+
+message FindAllPaymentsResponse {
+  repeated PaymentDto payment_dto = 1;
+}
+
+message PaymentDto {
+  string id = 1;
+  string orderId = 2;
+  double amount = 3;
+  string status = 4;
+  string method = 5;
+  string additional_info = 6;
+  string creation_date = 7;
+  string lastUpdatedDate = 8;
+}

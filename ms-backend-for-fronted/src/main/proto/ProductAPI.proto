@@ -1,0 +1,56 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.nicolebertolo.grpc.customerapi";
+option java_outer_classname = "ProductProto";
+
+service ProductServiceAPI {
+  rpc FindProductById(FindProductByIdRequest) returns (FindProductByIdResponse) {}
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {}
+  rpc FindAllProducts(FindAllProductsRequest) returns (FindAllProductsResponse) {}
+}
+
+message FindProductByIdRequest {
+  string product_id = 1;
+  string tracing = 2;
+}
+
+message FindProductByIdResponse {
+  ProductDto product_dto = 1;
+}
+
+message CreateProductRequest {
+  string identification_code = 2;
+  double price = 3;
+  string name = 4;
+  string description = 5;
+  StockInfoDto stock_info_dto = 6;
+  string tracing = 7;
+}
+
+message CreateProductResponse {
+  ProductDto product_dto = 1;
+}
+
+message FindAllProductsRequest {
+  string tracing = 1;
+}
+
+message FindAllProductsResponse {
+  repeated ProductDto product_dto = 1;
+}
+
+message ProductDto {
+  string id = 1;
+  string identification_code = 2;
+  double price = 3;
+  string name = 4;
+  string description = 5;
+  StockInfoDto stock_info_dto = 6;
+  string creation_date = 7;
+  string lastUpdatedDate = 8;
+}
+
+message StockInfoDto {
+  int32 quantity = 1;
+  string supplier_id = 2;
+}
