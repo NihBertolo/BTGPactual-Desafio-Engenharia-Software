@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Document(collation = "payment")
+@Document(collection = "payment")
 @Data
 @Builder
 public class Payment {

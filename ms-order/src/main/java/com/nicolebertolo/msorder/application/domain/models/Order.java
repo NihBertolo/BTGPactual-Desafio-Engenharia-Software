@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Document(collation = "order")
+@Document(collection = "order")
 @Data
 @Builder
 public class Order {

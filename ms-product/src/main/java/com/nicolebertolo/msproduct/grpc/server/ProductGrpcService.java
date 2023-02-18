@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
@@ -52,7 +53,6 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
                                                     .build()
                                     )
                                     .setCreationDate(product.getCreationDate().toString())
-                                    .setLastUpdatedDate(product.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
 
@@ -78,6 +78,7 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
                     ProductRequest.builder()
                             .name(request.getName())
                             .description(request.getDescription())
+                            .price(BigDecimal.valueOf(request.getPrice()))
                             .identificationCode(request.getIdentificationCode())
                             .stockInfo(
                                     StockInfo.builder()
@@ -101,7 +102,6 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
                                                     .build()
                                     )
                                     .setCreationDate(product.getCreationDate().toString())
-                                    .setLastUpdatedDate(product.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
 
@@ -141,7 +141,6 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
                                                             .build()
                                             )
                                             .setCreationDate(product.getCreationDate().toString())
-                                            .setLastUpdatedDate(product.getLastUpdatedDate().toString())
                                             .build()
                             ).collect(Collectors.toList())
                     ).build();

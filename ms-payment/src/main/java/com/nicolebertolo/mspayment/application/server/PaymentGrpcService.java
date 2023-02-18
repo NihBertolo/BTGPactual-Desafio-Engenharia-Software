@@ -2,6 +2,7 @@ package com.nicolebertolo.mspayment.application.server;
 
 import com.nicolebertolo.grpc.customerapi.*;
 import com.nicolebertolo.grpc.customerapi.PaymentServiceAPIGrpc.PaymentServiceAPIImplBase;
+import com.nicolebertolo.mspayment.application.domain.enums.PaymentMethod;
 import com.nicolebertolo.mspayment.application.domain.enums.PaymentStatus;
 import com.nicolebertolo.mspayment.application.ports.input.grpc.PaymentServerUseCase;
 import com.nicolebertolo.mspayment.application.service.PaymentService;
@@ -47,7 +48,6 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
                                     .setMethod(payment.getMethod().toString())
                                     .setStatus(payment.getStatus().toString())
                                     .setCreationDate(payment.getCreationDate().toString())
-                                    .setLastUpdatedDate(payment.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
 
@@ -71,6 +71,7 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
 
             val payment = this.paymentService.handlePaymentStatusById(
                     PaymentStatus.valueOf(request.getStatus()),
+                    PaymentMethod.valueOf(request.getMethod()),
                     request.getPaymentId(),
                     request.getTracing()
             );
@@ -82,10 +83,9 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
                                     .setOrderId(payment.getOrderId())
                                     .setAmount(payment.getAmount().doubleValue())
                                     .setAdditionalInfo(payment.getAdditionalInfo())
-                                    .setMethod(payment.getMethod().toString())
+                                    .setMethod(payment.getMethod().name())
                                     .setStatus(payment.getStatus().toString())
                                     .setCreationDate(payment.getCreationDate().toString())
-                                    .setLastUpdatedDate(payment.getLastUpdatedDate().toString())
                                     .build()
                     ).build();
 
@@ -117,10 +117,9 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
                                             .setOrderId(payment.getOrderId())
                                             .setAmount(payment.getAmount().doubleValue())
                                             .setAdditionalInfo(payment.getAdditionalInfo())
-                                            .setMethod(payment.getMethod().toString())
+                                            .setMethod((payment.getMethod() != null) ? payment.getMethod().toString() : "")
                                             .setStatus(payment.getStatus().toString())
                                             .setCreationDate(payment.getCreationDate().toString())
-                                            .setLastUpdatedDate(payment.getLastUpdatedDate().toString())
                                             .build()
                             ).collect(Collectors.toList())
                     ).build();

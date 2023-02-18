@@ -41,7 +41,6 @@ public class OrderResponse {
                 )
                 .status(orderDto.getStatus())
                 .creationDate(LocalDateTime.parse(orderDto.getCreationDate()))
-                .lastUpdatedDate(LocalDateTime.parse(orderDto.getLastUpdatedDate()))
                 .build();
     }
 

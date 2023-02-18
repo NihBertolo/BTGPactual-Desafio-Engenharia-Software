@@ -39,7 +39,12 @@ public class PaymentService {
         return payment.orElse(null);
     }
 
-    public Payment handlePaymentStatusById(PaymentStatus paymentStatus, String paymentId, String tracing) {
+    public Payment handlePaymentStatusById(
+            PaymentStatus paymentStatus,
+            PaymentMethod paymentMethod,
+            String paymentId,
+            String tracing
+    ) {
         LOGGER.info("[PaymentService.handlePaymentStatusById] - Handling payment status: " + paymentStatus + "by id: "
                 + paymentId);
 
@@ -48,18 +53,19 @@ public class PaymentService {
         );
 
         payment.setStatus(paymentStatus);
+        payment.setMethod(paymentMethod);
         LOGGER.info("[PaymentService.handlePaymentStatusById] - PaymentStatus updated.");
         val updatedPayment = this.paymentRepository.save(payment);
 
         MessageTemplate<PaymentReceivedMessage> message = new MessageTemplate<>(
                 "ms-order",
                 tracing,
-                LocalDateTime.now(),
+                LocalDateTime.now().toString(),
                 PaymentReceivedMessage.builder()
                         .orderId(updatedPayment.getOrderId())
                         .payedValue(updatedPayment.getAmount())
                         .paymentStatus(paymentStatus)
-                        .paymentMethod(PaymentMethod.PIX)
+                        .paymentMethod(paymentMethod)
                         .build());
 
         this.orderReceivedPaymentProducer.produceMessage(message);
@@ -77,6 +83,7 @@ public class PaymentService {
                         .status(PaymentStatus.PENDING)
                         .method(null)
                         .additionalInfo(paymentRequest.getAdditionalInfo())
+                        .creationDate(LocalDateTime.now())
                         .build()
         );
 

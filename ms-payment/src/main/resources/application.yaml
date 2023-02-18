@@ -6,16 +6,16 @@ spring:
       user: desafio
       password: engenharia
       database: desafio_engenharia
+    rabbitmq:
+      host: localhost
+      port: 5672
 server:
   port: 8083
 rabbitmq:
   queues:
     order-created-payment-queue: "order_created_payment_queue"
     order-received-payment-queue: "order_received_payment_queue"
-  topics:
-    order-created-payment-exchange: "order_created_payment_exchange"
-    order-received-payment-exchange: "order_received_payment_exchange"
-  routingKey: "desafioEngenhariaSoftware"
+  routingKey: "ms-payment_received"
 grpc:
   server:
     port: 4006

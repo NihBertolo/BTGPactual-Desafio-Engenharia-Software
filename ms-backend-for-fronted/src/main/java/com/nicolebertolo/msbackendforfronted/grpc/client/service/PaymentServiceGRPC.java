@@ -20,11 +20,11 @@ import static com.nicolebertolo.msbackendforfronted.grpc.client.domain.payment.P
 @Service
 public class PaymentServiceGRPC extends PaymentServiceAPIGrpc.PaymentServiceAPIImplBase {
 
-    @Value("${grpc.clients.order.address}")
-    private static final String address = "";
+    @Value("${grpc.clients.payment.address}")
+    private String address;
 
-    @Value("${grpc.clients.order.port}")
-    private static final int port = 0;
+    @Value("${grpc.clients.payment.port}")
+    private int port;
 
     private ManagedChannel getChannel() {
         return ManagedChannelBuilder.forAddress(address, port).usePlaintext().build();

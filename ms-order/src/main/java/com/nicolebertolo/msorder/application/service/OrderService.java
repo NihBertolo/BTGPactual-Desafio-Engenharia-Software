@@ -69,6 +69,7 @@ public class OrderService {
 
         val customer = this.customerChannel.findCustomerById(orderRequest.getCustomerId(), tracing);
 
+        LOGGER.info("[OrderService.createOrder] - Order indexed");
         val order = this.orderRepository.insert(
                 Order.builder()
                         .id(UUID.randomUUID().toString())
@@ -86,19 +87,19 @@ public class OrderService {
                                         .items(products)
                                         .build())
                         .status(OrderStatus.PENDING_PAYMENT)
+                        .creationDate(LocalDateTime.now())
                         .build()
         );
 
         MessageTemplate<PaymentCreatedMessage> message = new MessageTemplate<>(
                 "ms-order",
                 tracing,
-                LocalDateTime.now(),
+                LocalDateTime.now().toString(),
                 PaymentCreatedMessage.builder()
                         .orderId(order.getId())
                         .customerId(order.getCustomerId())
                         .paymentValue(order.getDetails().getTotalAmount())
                         .paymentStatus(PaymentStatus.PENDING)
-                        .paymentMethod(PaymentMethod.PIX)
                         .additionalInfo("Order Created")
                         .build());
 
@@ -116,21 +117,25 @@ public class OrderService {
 
         LOGGER.info("[OrderService.handleOrderStatusById] - Order id:" + orderId + "and status: "
                 + updateOrder.getStatus() + "has been updated.");
-        val result = this.orderRepository.save(updateOrder);
 
-        for (ProductInfo item : result.getDetails().getItems()) {
+        for (ProductInfo item : updateOrder.getDetails().getItems()) {
             var initialQuantity = 0;
             if (orderStatus.equals(OrderStatus.CONFIRMED)) {
-                initialQuantity = 1;
-            } else if (orderStatus.equals(OrderStatus.CANCELLED)) {
                 initialQuantity = -1;
+            } else if (orderStatus.equals(OrderStatus.CANCELLED)) {
+                initialQuantity = 1;
             }
             val tracing = UUID.randomUUID().toString();
             val newQuantity = productChannel.handleProductQuantity(item.getProductId(), initialQuantity, tracing);
 
-            LOGGER.info("[OrderService.handleOrderStatusById] - New quantity: " +newQuantity + "for productId: "
-                    +item.getProductId());
+            if(newQuantity.getNewQuantity() < 0) updateOrder.setStatus(OrderStatus.CANCELLED);
+
+
+            LOGGER.info("[OrderService.handleOrderStatusById] - New quantity: " +newQuantity.getNewQuantity()
+                    + "for productId: " +item.getProductId());
         }
+
+        this.orderRepository.save(updateOrder);
     }
 
     public List<Order> findAll() {
