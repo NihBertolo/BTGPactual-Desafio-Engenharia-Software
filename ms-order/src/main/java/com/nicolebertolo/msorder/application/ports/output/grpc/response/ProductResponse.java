@@ -34,7 +34,6 @@ public class ProductResponse {
                         .build()
                 )
                 .creationDate(LocalDateTime.parse(productDto.getCreationDate()))
-                .lastUpdatedDate(LocalDateTime.parse(productDto.getLastUpdatedDate()))
                 .build();
     }
 

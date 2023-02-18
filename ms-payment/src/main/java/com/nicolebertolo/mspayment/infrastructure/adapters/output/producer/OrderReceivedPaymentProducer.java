@@ -1,5 +1,6 @@
 package com.nicolebertolo.mspayment.infrastructure.adapters.output.producer;
 
+import com.nicolebertolo.mspayment.configuration.RabbitMQProperties;
 import com.nicolebertolo.mspayment.infrastructure.adapters.MessageTemplate;
 import com.nicolebertolo.mspayment.infrastructure.adapters.request.PaymentReceivedMessage;
 import org.slf4j.Logger;
@@ -17,18 +18,18 @@ public class OrderReceivedPaymentProducer {
     @Autowired
     private RabbitTemplate template;
 
-    @Value("${rabbitmq.routingKey}")
-    private static final String ROUTING_KEY = "";
 
-    @Value("${rabbitmq.topics.order-created-payment-exchange}")
-    private static final String CREATED_TOPIC = "";
+    @Autowired
+    private RabbitMQProperties rabbitMQProperties;
+
+    private String topic = "spring-boot-exchange";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public void produceMessage(MessageTemplate<PaymentReceivedMessage> payload) {
         LOGGER.info("[OrderCreatedPaymentProducer.produceMessage] - Sending message, tracing:" +payload.getTracing());
 
-        this.template.convertAndSend(CREATED_TOPIC, ROUTING_KEY, payload);
+        this.template.convertAndSend(topic, rabbitMQProperties.getROUTING_KEY(), payload);
         LOGGER.info("[OrderCreatedPaymentProducer.produceMessage] - Send, tracing:" +payload.getTracing());
 
     }

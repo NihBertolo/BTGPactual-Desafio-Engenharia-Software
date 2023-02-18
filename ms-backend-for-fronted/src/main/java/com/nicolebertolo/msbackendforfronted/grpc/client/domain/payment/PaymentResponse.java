@@ -23,6 +23,7 @@ public class PaymentResponse {
     public static PaymentResponse toResponse(PaymentDto paymentDto) {
         return PaymentResponse.builder()
                 .id(paymentDto.getId())
+                .orderId(paymentDto.getOrderId())
                 .additionalInfo(paymentDto.getAdditionalInfo())
                 .amount(BigDecimal.valueOf(paymentDto.getAmount()).setScale(2))
                 .method(paymentDto.getMethod())

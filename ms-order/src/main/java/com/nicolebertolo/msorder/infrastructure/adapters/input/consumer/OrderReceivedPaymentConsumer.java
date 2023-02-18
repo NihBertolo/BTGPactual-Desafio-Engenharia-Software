@@ -1,5 +1,7 @@
 package com.nicolebertolo.msorder.infrastructure.adapters.input.consumer;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nicolebertolo.msorder.application.ports.input.consumer.UpdateOrderServiceUseCase;
 import com.nicolebertolo.msorder.infrastructure.adapters.MessageTemplate;
 import com.nicolebertolo.msorder.infrastructure.adapters.request.PaymentReceivedMessage;
@@ -10,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Type;
 
 @Component
 public class OrderReceivedPaymentConsumer {
@@ -19,12 +23,12 @@ public class OrderReceivedPaymentConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Value("${rabbitmq.queues.order-received-payment-queue}")
-    private static final String RECEIVED_QUEUE = "";
+    private static final String RECEIVED_QUEUE = "order_received_payment_queue";
 
-    @RabbitListener(queues = RECEIVED_QUEUE)
-    public void consumeMessage(MessageTemplate<PaymentReceivedMessage> payload) {
-        LOGGER.info("[OrderReceivedConsumer.consumeMessage] - Consuming message from queue. - Start");
+    public void consumeMessage(byte[] message) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        MessageTemplate<PaymentReceivedMessage> payload =  objectMapper.readValue(message, new TypeReference<>() {});
+        LOGGER.info("[OrderReceivedConsumer.consumeMessage] - Consuming message from queue. - Start - Payload: " +payload);
         this.updateOrderServiceUseCase.updateOrder(payload);
         LOGGER.info("[OrderReceivedConsumer.consumeMessage] - Consuming message from queue. - End");
     }
