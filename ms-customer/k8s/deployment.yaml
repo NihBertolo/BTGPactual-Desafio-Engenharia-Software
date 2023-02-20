@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-customer
+  labels:
+    app: ms-customer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-customer
+  template:
+    metadata:
+      labels:
+        app: ms-customer
+    spec:
+      containers:
+        - name: ms-customer
+          image: nihbertolo97/desafio-engenharia-sofware:btg-ms-customer
+          ports:
+            - containerPort: 8082
+              name: http
+            - containerPort: 4004
+              name: grpc
+          env:
+            - name: MONGODB_USER
+              value: desafio
+            - name: MONGODB_PASS
+              value: engenharia
+            - name: MONGODB_HOST
+              value: 10.0.0.107

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-payment
+  labels:
+    app: ms-payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-payment
+  template:
+    metadata:
+      labels:
+        app: ms-payment
+    spec:
+      containers:
+        - name: ms-payment
+          image: nihbertolo97/desafio-engenharia-sofware:btg-ms-payment
+          ports:
+            - containerPort: 8084
+              name: http
+            - containerPort: 4006
+              name: grpc
+          env:
+            - name: MONGODB_USER
+              value: desafio
+            - name: MONGODB_PASS
+              value: engenharia
+            - name: MONGODB_HOST
+              value: 10.0.0.107

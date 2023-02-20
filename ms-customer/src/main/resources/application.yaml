@@ -1,11 +1,12 @@
-sprincg:
+spring:
   application:
     name: MS-CUSTOMER
   data:
     mongodb:
-      user: desafio
-      password: engenharia
+      user: ${MONGODB_USER:desafio}
+      password: ${MONGODB_PASS:engenharia}
       database: desafio_engenharia
+      host: ${MONGODB_HOST:10.0.0.107}
 server:
   port: 8085
 grpc:

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-payment
+  labels:
+    app: ms-payment
+    tier: backend
+spec:
+  selector:
+    app: ms-payment
+  ports:
+    - name: http
+      port: 8084
+      protocol: TCP
+      targetPort: 8084
+    - name: grpc
+      port: 4006
+      protocol: TCP
+      targetPort: 4006
+  clusterIP: 10.97.0.12
+  type: NodePort

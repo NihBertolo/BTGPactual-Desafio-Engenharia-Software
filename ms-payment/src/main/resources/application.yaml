@@ -3,12 +3,13 @@ spring:
     name: MS-PAYMENT
   data:
     mongodb:
-      user: desafio
-      password: engenharia
+      user: ${MONGODB_USER:desafio}
+      password: ${MONGODB_PASS:engenharia}
       database: desafio_engenharia
-    rabbitmq:
-      host: localhost
-      port: 5672
+      host: ${MONGODB_HOST:10.0.0.107}
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
 server:
   port: 8083
 rabbitmq:

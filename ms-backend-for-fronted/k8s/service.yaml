@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-bff
+  labels:
+    app: ms-bff
+    tier: backend
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.97.0.20
+  selector:
+    app: ms-bff
+  ports:
+    - name: http
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+    - name: grpc
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
