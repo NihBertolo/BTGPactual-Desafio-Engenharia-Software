@@ -3,10 +3,10 @@ spring:
     name: MS-PAYMENT
   data:
     mongodb:
-      user: ${MONGODB_USER:desafio}
-      password: ${MONGODB_PASS:engenharia}
+      user: ${MONGODB_USER}
+      password: ${MONGODB_PASS}
       database: desafio_engenharia
-      host: ${MONGODB_HOST:10.0.0.107}
+      host: ${MONGODB_HOST}
   rabbitmq:
     host: rabbitmq
     port: 5672
@@ -20,3 +20,14 @@ rabbitmq:
 grpc:
   server:
     port: 4006
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: 'info,health,metrics,prometheus'
+  server:
+    port: 9090
+    address: prometheus
+    servlet:
+      context-path: /actuator

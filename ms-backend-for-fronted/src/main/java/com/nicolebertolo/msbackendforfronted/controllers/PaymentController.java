@@ -1,8 +1,9 @@
 package com.nicolebertolo.msbackendforfronted.controllers;
 
+import com.nicolebertolo.msbackendforfronted.exceptions.ResourceNotFoundException;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.payment.PaymentRequest;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.payment.PaymentResponse;
-import com.nicolebertolo.msbackendforfronted.grpc.client.service.PaymentServiceGRPC;
+import com.nicolebertolo.msbackendforfronted.services.PaymentServiceAPI;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +19,15 @@ import java.util.UUID;
 public class PaymentController {
 
     @Autowired
-    private PaymentServiceGRPC paymentServiceGRPC;
+    private PaymentServiceAPI paymentServiceAPI;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     @GetMapping("/{id}")
-    public PaymentResponse findPaymentById(@PathVariable("id") String paymentId) {
+    public PaymentResponse findPaymentById(@PathVariable("id") String paymentId) throws ResourceNotFoundException {
         LOGGER.info("[PaymentController.findPaymentById] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.paymentServiceGRPC.findPaymentById(paymentId, tracing);
+        return this.paymentServiceAPI.findPaymentById(paymentId, tracing);
     }
 
     @PostMapping
@@ -34,7 +35,7 @@ public class PaymentController {
         LOGGER.info("[PaymentController.postPayment] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.paymentServiceGRPC.postPayment(paymentRequest, tracing);
+        return this.paymentServiceAPI.postPayment(paymentRequest, tracing);
     }
 
     @GetMapping
@@ -42,6 +43,6 @@ public class PaymentController {
         LOGGER.info("[PaymentController.findAllPayments] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.paymentServiceGRPC.findAllPayments(tracing);
+        return this.paymentServiceAPI.findAllPayments(tracing);
     }
 }

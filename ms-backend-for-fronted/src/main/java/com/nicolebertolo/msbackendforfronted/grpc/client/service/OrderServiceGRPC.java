@@ -1,9 +1,6 @@
 package com.nicolebertolo.msbackendforfronted.grpc.client.service;
 
-import com.nicolebertolo.grpc.customerapi.CreateOrderRequest;
-import com.nicolebertolo.grpc.customerapi.FindAllOrdersRequest;
-import com.nicolebertolo.grpc.customerapi.FindOrderByIdRequest;
-import com.nicolebertolo.grpc.customerapi.OrderServiceAPIGrpc;
+import com.nicolebertolo.grpc.customerapi.*;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.order.OrderRequest;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.order.OrderResponse;
 import io.grpc.ManagedChannel;
@@ -35,17 +32,17 @@ public class OrderServiceGRPC extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public OrderResponse findOrderById(String orderId, String tracing) {
+    public FindOrderByIdResponse findOrderById(String orderId, String tracing) {
         LOGGER.info("[OrderServiceGRPC.findOrderById] - Init GRPC Communication");
         val findOrderByIdRequest = FindOrderByIdRequest.newBuilder()
                 .setOrderId(orderId)
                 .setTracing(tracing)
                 .build();
 
-        return toResponse(OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).findOrderById(findOrderByIdRequest).getOrderDto());
+        return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).findOrderById(findOrderByIdRequest);
     }
 
-    public OrderResponse createOrder(OrderRequest orderRequest, String tracing) {
+    public CreateOrderResponse createOrder(OrderRequest orderRequest, String tracing) {
         LOGGER.info("[OrderServiceGRPC.createOrder] - Init GRPC Communication");
         val createOrderRequest = CreateOrderRequest.newBuilder()
                 .setCustomerId(orderRequest.getCustomerId())
@@ -53,14 +50,13 @@ public class OrderServiceGRPC extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
                 .setTracing(tracing)
                 .build();
 
-        return toResponse(OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).createOrder(createOrderRequest).getOrderDto());
+        return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).createOrder(createOrderRequest);
     }
 
-    public List<OrderResponse> findAllOrders(String tracing) {
+    public FindAllOrdersResponse findAllOrders(String tracing) {
         LOGGER.info("[OrderServiceGRPC.findAllOrders] - Init GRPC Communication");
         val findAllOrdersRequest = FindAllOrdersRequest.newBuilder().setTracing(tracing).build();
 
-        return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).findAllOrders(findAllOrdersRequest)
-                .getOrderDtoList().stream().map(OrderResponse::toResponse).collect(Collectors.toList());
+        return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).findAllOrders(findAllOrdersRequest);
     }
 }

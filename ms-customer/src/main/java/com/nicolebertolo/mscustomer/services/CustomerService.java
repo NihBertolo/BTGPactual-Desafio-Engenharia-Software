@@ -1,6 +1,7 @@
 package com.nicolebertolo.mscustomer.services;
 
 import com.nicolebertolo.mscustomer.domain.models.Customer;
+import com.nicolebertolo.mscustomer.exceptions.CustomerNotFoundException;
 import com.nicolebertolo.mscustomer.grpc.server.request.CustomerRequest;
 import com.nicolebertolo.mscustomer.repository.CustomerRepository;
 
@@ -26,7 +27,7 @@ public class CustomerService {
         LOGGER.info("[CustomerService.findCustomerById] - Finding customer by id: " + customerId);
         val customer = this.customerRepository.findById(customerId);
 
-        return customer.orElse(null);
+        return customer.orElseThrow(() -> new CustomerNotFoundException("Customer not found."));
     }
 
     public Customer createCustomer(CustomerRequest customerRequest) {
@@ -41,7 +42,7 @@ public class CustomerService {
                         .creationDate(LocalDateTime.now())
                         .build()
         );
-        LOGGER.info("[CustomerService.createCustomer] - A new customer with id: " + customer.getId() + " has been created" +customer.getCreationDate());
+        LOGGER.info("[CustomerService.createCustomer] - A new customer with id: " + customer.getId());
         return customer;
     }
 

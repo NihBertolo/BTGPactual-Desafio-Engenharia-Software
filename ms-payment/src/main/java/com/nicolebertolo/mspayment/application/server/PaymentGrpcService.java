@@ -4,9 +4,11 @@ import com.nicolebertolo.grpc.customerapi.*;
 import com.nicolebertolo.grpc.customerapi.PaymentServiceAPIGrpc.PaymentServiceAPIImplBase;
 import com.nicolebertolo.mspayment.application.domain.enums.PaymentMethod;
 import com.nicolebertolo.mspayment.application.domain.enums.PaymentStatus;
+import com.nicolebertolo.mspayment.application.domain.models.Payment;
+import com.nicolebertolo.mspayment.application.excpetions.CantConvertEnumException;
+import com.nicolebertolo.mspayment.application.excpetions.handlers.GrpcErrorHandler;
 import com.nicolebertolo.mspayment.application.ports.input.grpc.PaymentServerUseCase;
 import com.nicolebertolo.mspayment.application.service.PaymentService;
-import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import lombok.val;
@@ -18,13 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.invoke.MethodHandles;
 import java.util.stream.Collectors;
 
-import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-
 @GrpcService
 public class PaymentGrpcService extends PaymentServiceAPIImplBase implements PaymentServerUseCase {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private GrpcErrorHandler grpcErrorHandler;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -38,26 +41,12 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
 
             val payment = this.paymentService.findPaymentById(request.getPaymentId());
 
-            val paymentResponse = FindPaymentByIdResponse.newBuilder()
-                    .setPaymentDto(
-                            PaymentDto.newBuilder()
-                                    .setId(payment.getId())
-                                    .setOrderId(payment.getOrderId())
-                                    .setAmount(payment.getAmount().doubleValue())
-                                    .setAdditionalInfo(payment.getAdditionalInfo())
-                                    .setMethod(payment.getMethod().toString())
-                                    .setStatus(payment.getStatus().toString())
-                                    .setCreationDate(payment.getCreationDate().toString())
-                                    .build()
-                    ).build();
+            val paymentResponse = FindPaymentByIdResponse.newBuilder().setPaymentDto(toDto(payment)).build();
 
             responseObserver.onNext(paymentResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 
@@ -68,34 +57,29 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
     ) {
         try {
             LOGGER.info("[PaymentServer.postPaymentById] - Posting payment by Id, tracing: " + request.getTracing());
+            PaymentStatus paymentStatus;
+            PaymentMethod paymentMethod;
+
+            try {
+                paymentStatus = PaymentStatus.valueOf(request.getStatus());
+                paymentMethod = PaymentMethod.valueOf(request.getMethod());
+            } catch (Exception ex) {
+                throw new CantConvertEnumException("Can't convert enum, with cause: " +ex.getMessage());
+            }
 
             val payment = this.paymentService.handlePaymentStatusById(
-                    PaymentStatus.valueOf(request.getStatus()),
-                    PaymentMethod.valueOf(request.getMethod()),
+                    paymentStatus,
+                    paymentMethod,
                     request.getPaymentId(),
                     request.getTracing()
             );
 
-            val paymentResponse = PostPaymentByIdResponse.newBuilder()
-                    .setPaymentDto(
-                            PaymentDto.newBuilder()
-                                    .setId(payment.getId())
-                                    .setOrderId(payment.getOrderId())
-                                    .setAmount(payment.getAmount().doubleValue())
-                                    .setAdditionalInfo(payment.getAdditionalInfo())
-                                    .setMethod(payment.getMethod().name())
-                                    .setStatus(payment.getStatus().toString())
-                                    .setCreationDate(payment.getCreationDate().toString())
-                                    .build()
-                    ).build();
+            val paymentResponse = PostPaymentByIdResponse.newBuilder().setPaymentDto(toDto(payment)).build();
 
             responseObserver.onNext(paymentResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 
@@ -110,27 +94,24 @@ public class PaymentGrpcService extends PaymentServiceAPIImplBase implements Pay
             val payments = this.paymentService.findAll();
 
             val paymentsResponse = FindAllPaymentsResponse.newBuilder()
-                    .addAllPaymentDto(
-                            payments.stream().map(payment ->
-                                    PaymentDto.newBuilder()
-                                            .setId(payment.getId())
-                                            .setOrderId(payment.getOrderId())
-                                            .setAmount(payment.getAmount().doubleValue())
-                                            .setAdditionalInfo(payment.getAdditionalInfo())
-                                            .setMethod((payment.getMethod() != null) ? payment.getMethod().toString() : "")
-                                            .setStatus(payment.getStatus().toString())
-                                            .setCreationDate(payment.getCreationDate().toString())
-                                            .build()
-                            ).collect(Collectors.toList())
-                    ).build();
+                    .addAllPaymentDto(payments.stream().map(this::toDto).collect(Collectors.toList())).build();
 
             responseObserver.onNext(paymentsResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
+    }
+
+    private PaymentDto toDto(Payment payment) {
+        return PaymentDto.newBuilder()
+                .setId(payment.getId())
+                .setOrderId(payment.getOrderId())
+                .setAmount(payment.getAmount().doubleValue())
+                .setAdditionalInfo(payment.getAdditionalInfo())
+                .setMethod((payment.getMethod() != null) ? payment.getMethod().toString() : "")
+                .setStatus(payment.getStatus().toString())
+                .setCreationDate(payment.getCreationDate().toString())
+                .build();
     }
 }

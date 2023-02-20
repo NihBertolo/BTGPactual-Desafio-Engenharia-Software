@@ -2,7 +2,7 @@ package com.nicolebertolo.msbackendforfronted.controllers;
 
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductRequest;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductResponse;
-import com.nicolebertolo.msbackendforfronted.grpc.client.service.ProductServiceGRPC;
+import com.nicolebertolo.msbackendforfronted.services.ProductServiceAPI;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class ProductController {
 
     @Autowired
-    private ProductServiceGRPC productServiceGRPC;
+    private ProductServiceAPI productServiceAPI;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -27,7 +27,7 @@ public class ProductController {
         LOGGER.info("[ProductController.findProductId] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.productServiceGRPC.findProductById(productId, tracing);
+        return this.productServiceAPI.findProductById(productId, tracing);
     }
 
     @PostMapping
@@ -35,7 +35,7 @@ public class ProductController {
         LOGGER.info("[ProductController.createProduct] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.productServiceGRPC.createProduct(productRequest, tracing);
+        return this.productServiceAPI.createProduct(productRequest, tracing);
     }
 
     @GetMapping
@@ -43,6 +43,6 @@ public class ProductController {
         LOGGER.info("[ProductController.findAllProducts] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.productServiceGRPC.findAllProducts(tracing);
+        return this.productServiceAPI.findAllProducts(tracing);
     }
 }

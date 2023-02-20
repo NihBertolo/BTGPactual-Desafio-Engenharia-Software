@@ -5,6 +5,7 @@ import com.nicolebertolo.msorder.application.domain.enums.OrderStatus;
 import com.nicolebertolo.msorder.application.domain.models.Order;
 import com.nicolebertolo.msorder.application.domain.models.OrderDetails;
 import com.nicolebertolo.msorder.application.domain.models.ProductInfo;
+import com.nicolebertolo.msorder.application.exceptions.OrderNotFoundException;
 import com.nicolebertolo.msorder.application.ports.output.grpc.channel.CustomerChannel;
 import com.nicolebertolo.msorder.application.ports.output.grpc.channel.ProductChannel;
 import com.nicolebertolo.msorder.application.repository.OrderRepository;
@@ -12,7 +13,6 @@ import com.nicolebertolo.msorder.infrastructure.adapters.MessageTemplate;
 import com.nicolebertolo.msorder.infrastructure.adapters.output.producer.OrderCreatedPaymentProducer;
 import com.nicolebertolo.msorder.infrastructure.adapters.request.OrderRequest;
 import com.nicolebertolo.msorder.infrastructure.adapters.request.PaymentCreatedMessage;
-import com.nicolebertolo.msorder.infrastructure.adapters.request.enums.PaymentMethod;
 import com.nicolebertolo.msorder.infrastructure.adapters.request.enums.PaymentStatus;
 import lombok.val;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class OrderService {
     public Order findOrderById(String orderId) {
         LOGGER.info("[OrderService.findOrderById] - Finding order by id:" + orderId);
         val order = this.orderRepository.findById(orderId);
-        return order.orElse(null);
+        return order.orElseThrow(() -> new OrderNotFoundException("Order not found."));
     }
 
     public Order createOrder(OrderRequest orderRequest, String tracing) {
@@ -111,7 +111,9 @@ public class OrderService {
 
     public void handleOrderStatusById(OrderStatus orderStatus, String orderId) {
         LOGGER.info("[OrderService.handleOrderStatusById] - Updating order by id:" + orderId);
-        val updateOrder = this.orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException(""));
+        val updateOrder = this.orderRepository.findById(orderId).orElseThrow(
+                () -> new OrderNotFoundException("Order not found.")
+        );
 
         updateOrder.setStatus(orderStatus);
 
