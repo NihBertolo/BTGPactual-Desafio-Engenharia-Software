@@ -41,6 +41,11 @@
 			<version>2.14.0.RELEASE</version>
 		</dependency>
 		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>7.0.1</version>
+		</dependency>
+		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-protobuf</artifactId>
 			<version>1.50.2</version>

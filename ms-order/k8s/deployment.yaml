@@ -13,12 +13,16 @@ spec:
     metadata:
       labels:
         app: ms-order
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
     spec:
       containers:
         - name: ms-order
           image: nihbertolo97/desafio-engenharia-sofware:btg-ms-order
           ports:
-            - containerPort: 8083
+            - containerPort: 8080
               name: http
             - containerPort: 4005
               name: grpc

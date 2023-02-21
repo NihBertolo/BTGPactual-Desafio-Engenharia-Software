@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: MS-ORDER
+  data:
+    mongodb:
+      user: ${MONGODB_USER}
+      password: ${MONGODB_PASS}
+      database: desafio_engenharia
+      host: ${MONGODB_HOST}
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+server:
+  port: 8085
+rabbitmq:
+  queues:
+    order-created-payment-queue: "order_created_payment_queue"
+    order-received-payment-queue: "order_received_payment_queue"
+  routingKey: "ms-order_created"
+grpc:
+  server:
+    port: 4005
+  clients:
+    customer:
+      address: ms-customer
+      port: 4004
+    order:
+      address: ms-order
+      port: 4005
+    payment:
+      address: ms-payment
+      port: 4006
+    product:
+      address: ms-product
+      port: 4007
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: 'info,health,metrics,prometheus'

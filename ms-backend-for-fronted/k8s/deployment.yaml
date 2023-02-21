@@ -18,7 +18,7 @@ spec:
         - name: ms-bff
           image: nihbertolo97/desafio-engenharia-sofware:btg-ms-bff
           ports:
-            - containerPort: 8081
+            - containerPort: 8080
               name: http
             - containerPort: 4003
               name: grpc

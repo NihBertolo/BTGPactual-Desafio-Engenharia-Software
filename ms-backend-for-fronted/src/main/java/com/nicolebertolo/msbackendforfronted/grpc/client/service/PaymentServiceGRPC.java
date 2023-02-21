@@ -3,6 +3,7 @@ package com.nicolebertolo.msbackendforfronted.grpc.client.service;
 import com.nicolebertolo.grpc.customerapi.*;
 import com.nicolebertolo.msbackendforfronted.exceptions.OperationException;
 import com.nicolebertolo.msbackendforfronted.exceptions.ResourceNotFoundException;
+import com.nicolebertolo.msbackendforfronted.exceptions.UnavailableServiceException;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.payment.PaymentRequest;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -31,7 +32,7 @@ public class PaymentServiceGRPC extends PaymentServiceAPIGrpc.PaymentServiceAPII
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public FindPaymentByIdResponse findPaymentById(String paymentId, String tracing) throws ResourceNotFoundException {
+    public FindPaymentByIdResponse findPaymentById(String paymentId, String tracing) {
         LOGGER.info("[PaymentServiceGRPC.findPaymentById] - Init GRPC Communication");
         try {
             val findPaymentByIdRequest = FindPaymentByIdRequest.newBuilder()
@@ -43,6 +44,8 @@ public class PaymentServiceGRPC extends PaymentServiceAPIGrpc.PaymentServiceAPII
         } catch (StatusRuntimeException ex) {
             if (ex.getStatus().getCode().toStatus().equals(Status.NOT_FOUND)) {
                 throw new ResourceNotFoundException("Payment with id: " + paymentId + " not found.");
+            } else if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
             } else {
                 throw new OperationException("Error at communication.");
             }
@@ -66,6 +69,8 @@ public class PaymentServiceGRPC extends PaymentServiceAPIGrpc.PaymentServiceAPII
             } else if (ex.getStatus().getCode().toStatus().equals(Status.INVALID_ARGUMENT)) {
                 throw new IllegalArgumentException("Only payments methods allowed: PIX, CREDIT_CARD, BANKSLIP.\n " +
                         "Only payments status allowed: PENDING, REFUSED, CONFIRMED, CANCELLED.");
+            } else if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
             } else {
                 throw new OperationException("Error at communication.");
             }
@@ -81,7 +86,11 @@ public class PaymentServiceGRPC extends PaymentServiceAPIGrpc.PaymentServiceAPII
 
             return PaymentServiceAPIGrpc.newBlockingStub(this.getChannel()).findAllPayments(findAllPaymentsRequest);
         } catch (StatusRuntimeException ex) {
-            throw new OperationException("Error at communication.");
+            if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
+            } else {
+                throw new OperationException("Error at communication.");
+            }
         }
     }
 }

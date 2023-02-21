@@ -4,6 +4,7 @@ package com.nicolebertolo.msbackendforfronted.grpc.client.service;
 import com.nicolebertolo.grpc.customerapi.*;
 import com.nicolebertolo.msbackendforfronted.exceptions.OperationException;
 import com.nicolebertolo.msbackendforfronted.exceptions.ResourceNotFoundException;
+import com.nicolebertolo.msbackendforfronted.exceptions.UnavailableServiceException;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.customer.CustomerRequest;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -45,6 +46,8 @@ public class CustomerServiceGRPC {
         } catch (StatusRuntimeException ex) {
             if (ex.getStatus().getCode().toStatus().equals(Status.NOT_FOUND)) {
                 throw new ResourceNotFoundException("Customer with id: " + customerId + " not found.");
+            } else if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
             } else {
                 throw new OperationException("Error at communication.");
             }
@@ -77,7 +80,11 @@ public class CustomerServiceGRPC {
 
             return CustomerServiceAPIGrpc.newBlockingStub(this.getChannel()).createCustomer(createCustomerRequest);
         } catch (StatusRuntimeException ex) {
-            throw new OperationException("Error at communication.");
+            if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
+            } else {
+                throw new OperationException("Error at communication.");
+            }
         }
     }
 
@@ -91,7 +98,11 @@ public class CustomerServiceGRPC {
 
             return CustomerServiceAPIGrpc.newBlockingStub(this.getChannel()).findAllCustomers(findAllCustomersRequest);
         } catch (StatusRuntimeException ex) {
-            throw new OperationException("Error at communication.");
+            if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
+            } else {
+                throw new OperationException("Error at communication.");
+            }
         }
     }
 

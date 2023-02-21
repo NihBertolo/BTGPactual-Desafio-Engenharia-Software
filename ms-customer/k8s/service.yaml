@@ -10,9 +10,9 @@ spec:
     app: ms-customer
   ports:
     - name: http
-      port: 8082
+      port: 8080
       protocol: TCP
-      targetPort: 8082
+      targetPort: 8080
     - name: grpc
       port: 4004
       protocol: TCP

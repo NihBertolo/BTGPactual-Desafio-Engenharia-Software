@@ -18,7 +18,7 @@ spec:
         - name: ms-customer
           image: nihbertolo97/desafio-engenharia-sofware:btg-ms-customer
           ports:
-            - containerPort: 8082
+            - containerPort: 8080
               name: http
             - containerPort: 4004
               name: grpc

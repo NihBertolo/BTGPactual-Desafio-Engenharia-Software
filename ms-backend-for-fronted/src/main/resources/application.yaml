@@ -5,16 +5,16 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 server:
-  port: 8081
+  port: 8080
 grpc:
   server:
     port: 4003
   clients:
     customer:
-      address: localhost
+      address: ms-customer
       port: 4004
     order:
-      address: localhost
+      address: ms-order
       port: 4005
     payment:
       address: ms-payment
@@ -24,10 +24,9 @@ grpc:
       port: 4007
 management:
   endpoints:
-    enabled-by-default: false
     web:
       exposure:
-        include: 'info,health,metrics,prometheus'
+        include: prometheus
   server:
     port: 9090
     address: prometheus

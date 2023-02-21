@@ -7,6 +7,8 @@ import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
@@ -23,26 +25,28 @@ public class ProductController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @GetMapping("/{id}")
-    public ProductResponse findProductById(@PathVariable("id") String productId) {
+    public ResponseEntity<ProductResponse> findProductById(@PathVariable("id") String productId) {
         LOGGER.info("[ProductController.findProductId] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.productServiceAPI.findProductById(productId, tracing);
+        return ResponseEntity.ok(this.productServiceAPI.findProductById(productId, tracing));
     }
 
     @PostMapping
-    public ProductResponse createProduct(@RequestBody ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest productRequest) {
         LOGGER.info("[ProductController.createProduct] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.productServiceAPI.createProduct(productRequest, tracing);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(this.productServiceAPI.createProduct(productRequest, tracing));
     }
 
     @GetMapping
-    public List<ProductResponse> findAllProducts() {
+    public ResponseEntity<List<ProductResponse>> findAllProducts() {
         LOGGER.info("[ProductController.findAllProducts] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.productServiceAPI.findAllProducts(tracing);
+        return ResponseEntity.status(HttpStatus.OK).body(this.productServiceAPI.findAllProducts(tracing));
     }
 }

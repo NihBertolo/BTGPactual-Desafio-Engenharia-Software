@@ -18,7 +18,7 @@ spec:
         - name: ms-product
           image: nihbertolo97/desafio-engenharia-sofware:btg-ms-product
           ports:
-            - containerPort: 8085
+            - containerPort: 8080
               name: http
             - containerPort: 4007
               name: grpc

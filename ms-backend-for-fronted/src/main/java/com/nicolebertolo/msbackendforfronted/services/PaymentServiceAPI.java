@@ -24,7 +24,7 @@ public class PaymentServiceAPI {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public PaymentResponse findPaymentById(String paymentId, String tracing) throws ResourceNotFoundException {
+    public PaymentResponse findPaymentById(String paymentId, String tracing) {
         val paymentGRPC = this.paymentServiceGRPC.findPaymentById(paymentId, tracing);
         LOGGER.info("[PaymentServiceAPI.findPaymentById] - Converting gRPC protobuf to Model, tracing: " +tracing);
 

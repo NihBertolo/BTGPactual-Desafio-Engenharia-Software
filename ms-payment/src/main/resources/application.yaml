@@ -11,7 +11,7 @@ spring:
     host: rabbitmq
     port: 5672
 server:
-  port: 8083
+  port: 8080
 rabbitmq:
   queues:
     order-created-payment-queue: "order_created_payment_queue"

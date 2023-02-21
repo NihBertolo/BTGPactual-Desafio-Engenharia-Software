@@ -10,9 +10,9 @@ spec:
     app: ms-product
   ports:
     - name: http
-      port: 8085
+      port: 8080
       protocol: TCP
-      targetPort: 8085
+      targetPort: 8080
     - name: grpc
       port: 4007
       protocol: TCP

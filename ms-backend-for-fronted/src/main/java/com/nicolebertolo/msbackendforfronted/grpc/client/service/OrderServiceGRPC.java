@@ -1,10 +1,15 @@
 package com.nicolebertolo.msbackendforfronted.grpc.client.service;
 
 import com.nicolebertolo.grpc.customerapi.*;
+import com.nicolebertolo.msbackendforfronted.exceptions.OperationException;
+import com.nicolebertolo.msbackendforfronted.exceptions.ResourceNotFoundException;
+import com.nicolebertolo.msbackendforfronted.exceptions.UnavailableServiceException;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.order.OrderRequest;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.order.OrderResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,29 +39,55 @@ public class OrderServiceGRPC extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
 
     public FindOrderByIdResponse findOrderById(String orderId, String tracing) {
         LOGGER.info("[OrderServiceGRPC.findOrderById] - Init GRPC Communication");
-        val findOrderByIdRequest = FindOrderByIdRequest.newBuilder()
-                .setOrderId(orderId)
-                .setTracing(tracing)
-                .build();
+        try {
+            val findOrderByIdRequest = FindOrderByIdRequest.newBuilder()
+                    .setOrderId(orderId)
+                    .setTracing(tracing)
+                    .build();
 
-        return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).findOrderById(findOrderByIdRequest);
+            return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).findOrderById(findOrderByIdRequest);
+        } catch (StatusRuntimeException ex) {
+            if (ex.getStatus().getCode().toStatus().equals(Status.NOT_FOUND)) {
+                throw new ResourceNotFoundException("Order with id: " + orderId + " not found.");
+            } else if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
+            } else {
+                throw new OperationException("Error at communication.");
+            }
+        }
     }
 
     public CreateOrderResponse createOrder(OrderRequest orderRequest, String tracing) {
         LOGGER.info("[OrderServiceGRPC.createOrder] - Init GRPC Communication");
-        val createOrderRequest = CreateOrderRequest.newBuilder()
-                .setCustomerId(orderRequest.getCustomerId())
-                .addAllProductsId(orderRequest.getProductsIds())
-                .setTracing(tracing)
-                .build();
+        try {
+            val createOrderRequest = CreateOrderRequest.newBuilder()
+                    .setCustomerId(orderRequest.getCustomerId())
+                    .addAllProductsId(orderRequest.getProductsIds())
+                    .setTracing(tracing)
+                    .build();
 
-        return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).createOrder(createOrderRequest);
+            return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).createOrder(createOrderRequest);
+        } catch (StatusRuntimeException ex) {
+            if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
+            } else {
+                throw new OperationException("Error at communication.");
+            }
+        }
     }
 
     public FindAllOrdersResponse findAllOrders(String tracing) {
         LOGGER.info("[OrderServiceGRPC.findAllOrders] - Init GRPC Communication");
-        val findAllOrdersRequest = FindAllOrdersRequest.newBuilder().setTracing(tracing).build();
+        try {
+            val findAllOrdersRequest = FindAllOrdersRequest.newBuilder().setTracing(tracing).build();
 
-        return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).findAllOrders(findAllOrdersRequest);
+            return OrderServiceAPIGrpc.newBlockingStub(this.getChannel()).findAllOrders(findAllOrdersRequest);
+        } catch (StatusRuntimeException ex) {
+            if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
+            } else {
+                throw new OperationException("Error at communication.");
+            }
+        }
     }
 }

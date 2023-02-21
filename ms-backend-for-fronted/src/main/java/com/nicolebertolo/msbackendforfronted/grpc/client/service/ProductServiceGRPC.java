@@ -3,6 +3,7 @@ package com.nicolebertolo.msbackendforfronted.grpc.client.service;
 import com.nicolebertolo.grpc.customerapi.*;
 import com.nicolebertolo.msbackendforfronted.exceptions.OperationException;
 import com.nicolebertolo.msbackendforfronted.exceptions.ResourceNotFoundException;
+import com.nicolebertolo.msbackendforfronted.exceptions.UnavailableServiceException;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductRequest;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductResponse;
 import io.grpc.ManagedChannel;
@@ -48,6 +49,8 @@ public class ProductServiceGRPC {
         } catch (StatusRuntimeException ex) {
             if (ex.getStatus().getCode().toStatus().equals(Status.NOT_FOUND)) {
                 throw new ResourceNotFoundException("Product with id: " + productId + " not found.");
+            } else if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
             } else {
                 throw new OperationException("Error at communication.");
             }
@@ -72,7 +75,11 @@ public class ProductServiceGRPC {
 
             return ProductServiceAPIGrpc.newBlockingStub(this.getChannel()).createProduct(createProductRequest);
         } catch (StatusRuntimeException ex) {
-            throw new OperationException("Error at communication.");
+            if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
+            } else {
+                throw new OperationException("Error at communication.");
+            }
         }
     }
 
@@ -83,7 +90,11 @@ public class ProductServiceGRPC {
 
             return ProductServiceAPIGrpc.newBlockingStub(this.getChannel()).findAllProducts(findAllProductsRequest);
         } catch (StatusRuntimeException ex) {
-            throw new OperationException("Error at communication.");
+            if (ex.getStatus().getCode().toStatus().equals(Status.UNAVAILABLE)) {
+                throw new UnavailableServiceException("Service unavailable");
+            } else {
+                throw new OperationException("Error at communication.");
+            }
         }
     }
 }

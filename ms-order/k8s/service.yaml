@@ -10,9 +10,9 @@ spec:
     app: ms-order
   ports:
     - name: http
-      port: 8083
+      port: 8080
       protocol: TCP
-      targetPort: 8083
+      targetPort: 8080
     - name: grpc
       port: 4005
       protocol: TCP
