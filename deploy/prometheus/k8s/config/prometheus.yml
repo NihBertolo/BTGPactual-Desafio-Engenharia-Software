@@ -1,13 +1,111 @@
-global:
-  scrape_interval: 10s
-  evaluation_interval: 10s
-  scrape_timeout: 10s
-
 scrape_configs:
-  - job_name: 'node_exporter'
-    static_configs:
-      - targets: ['ms-bff:8080', 'ms-customer:8080', 'ms-order:8080', 'ms-payment:8080', 'ms-product:8080']
-
-  - job_name: 'prometheus'
-    static_configs:
-      - targets: ['localhost:9090']
+  - job_name: 'ms-bff'
+    metrics_path: '/actuator/prometheus'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - default
+    relabel_configs:
+      - source_labels: [ __meta_kubernetes_endpoint_port_name ]
+        action: keep
+        regex: http
+      - source_labels: [ __meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name ]
+        action: replace
+        target_label: instance
+        regex: (.+);(.*)
+        replacement: $2
+      - source_labels: [ __meta_kubernetes_namespace ]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [ __meta_kubernetes_endpoint_address_target_name ]
+        action: replace
+        target_label: kubernetes_pod_name
+  - job_name: 'ms-customer'
+    metrics_path: '/actuator/prometheus'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - default
+    relabel_configs:
+      - source_labels: [ __meta_kubernetes_endpoint_port_name ]
+        action: keep
+        regex: http
+      - source_labels: [ __meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name ]
+        action: replace
+        target_label: instance
+        regex: (.+);(.*)
+        replacement: $2
+      - source_labels: [ __meta_kubernetes_namespace ]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [ __meta_kubernetes_endpoint_address_target_name ]
+        action: replace
+        target_label: kubernetes_pod_name
+  - job_name: 'ms-order'
+    metrics_path: '/actuator/prometheus'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - default
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: http
+      - source_labels: [__meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name]
+        action: replace
+        target_label: instance
+        regex: (.+);(.*)
+        replacement: $2
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_endpoint_address_target_name]
+        action: replace
+        target_label: kubernetes_pod_name
+  - job_name: 'ms-payment'
+    metrics_path: '/actuator/prometheus'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - default
+    relabel_configs:
+      - source_labels: [ __meta_kubernetes_endpoint_port_name ]
+        action: keep
+        regex: http
+      - source_labels: [ __meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name ]
+        action: replace
+        target_label: instance
+        regex: (.+);(.*)
+        replacement: $2
+      - source_labels: [ __meta_kubernetes_namespace ]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [ __meta_kubernetes_endpoint_address_target_name ]
+        action: replace
+        target_label: kubernetes_pod_name
+  - job_name: 'ms-product'
+    metrics_path: '/actuator/prometheus'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - default
+    relabel_configs:
+      - source_labels: [ __meta_kubernetes_endpoint_port_name ]
+        action: keep
+        regex: http
+      - source_labels: [ __meta_kubernetes_endpoint_address_target_kind, __meta_kubernetes_endpoint_address_target_name ]
+        action: replace
+        target_label: instance
+        regex: (.+);(.*)
+        replacement: $2
+      - source_labels: [ __meta_kubernetes_namespace ]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [ __meta_kubernetes_endpoint_address_target_name ]
+        action: replace
+        target_label: kubernetes_pod_name

@@ -26,8 +26,3 @@ management:
     web:
       exposure:
         include: 'info,health,metrics,prometheus'
-  server:
-    port: 9090
-    address: prometheus
-    servlet:
-      context-path: /actuator

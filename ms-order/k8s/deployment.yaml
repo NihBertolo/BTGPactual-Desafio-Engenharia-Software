@@ -15,7 +15,7 @@ spec:
         app: ms-order
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "8080"
+        prometheus.io/port: "9090"
         prometheus.io/path: "/actuator/prometheus"
     spec:
       containers:
@@ -32,4 +32,4 @@ spec:
             - name: MONGODB_PASS
               value: engenharia
             - name: MONGODB_HOST
-              value: 10.0.0.107
+              value: 0.0.0.0

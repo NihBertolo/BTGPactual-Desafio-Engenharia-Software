@@ -35,12 +35,6 @@ grpc:
       port: 4007
 management:
   endpoints:
-    enabled-by-default: false
     web:
       exposure:
-        include: 'info,health,metrics,prometheus'
-  server:
-    port: 9090
-    address: prometheus
-    servlet:
-      context-path: /actuator
+        include: "health,info,metrics,prometheus"

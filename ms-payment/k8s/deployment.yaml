@@ -28,4 +28,4 @@ spec:
             - name: MONGODB_PASS
               value: engenharia
             - name: MONGODB_HOST
-              value: 10.0.0.107
+              value: 0.0.0.0
