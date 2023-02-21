@@ -3,14 +3,15 @@ spring:
     name: MS-PAYMENT
   data:
     mongodb:
-      user: desafio
-      password: engenharia
+      user: ${MONGODB_USER}
+      password: ${MONGODB_PASS}
       database: desafio_engenharia
-    rabbitmq:
-      host: localhost
-      port: 5672
+      host: ${MONGODB_HOST}
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
 server:
-  port: 8083
+  port: 8080
 rabbitmq:
   queues:
     order-created-payment-queue: "order_created_payment_queue"
@@ -19,3 +20,9 @@ rabbitmq:
 grpc:
   server:
     port: 4006
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: 'info,health,metrics,prometheus'

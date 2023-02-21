@@ -10,11 +10,8 @@ import java.util.List;
 @Data
 @Builder
 public class CustomerRequest {
-
     private String name;
     private String lastname;
-
     private List<CustomerDocument> documents;
-
     private List<Address> addresses;
 }

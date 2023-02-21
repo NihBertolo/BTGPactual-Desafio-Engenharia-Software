@@ -3,8 +3,10 @@ package com.nicolebertolo.mscustomer.grpc.server;
 
 import com.nicolebertolo.grpc.customerapi.*;
 import com.nicolebertolo.mscustomer.domain.models.Address;
+import com.nicolebertolo.mscustomer.domain.models.Customer;
 import com.nicolebertolo.mscustomer.domain.models.CustomerDocument;
 import com.nicolebertolo.mscustomer.grpc.server.request.CustomerRequest;
+import com.nicolebertolo.mscustomer.grpc.server.response.CustomerResponse;
 import com.nicolebertolo.mscustomer.services.CustomerService;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
@@ -37,31 +39,9 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
             LOGGER.info("[CustomerServer.findCustomerById] - Finding Customer by Id, tracing: " + request.getTracing());
 
             val customer = this.customerService.findCustomerById(request.getId());
-            val customerResponse = FindCustomerByIdResponse.newBuilder()
-                    .setCustomerDto(
-                            CustomerDto.newBuilder()
-                                    .setId(customer.getId())
-                                    .setName(customer.getName())
-                                    .setLastname(customer.getLastname())
-                                    .addAllCustomerAddressDto(customer.getAddresses().stream().map(address ->
-                                            CustomerAddressDto.newBuilder()
-                                                    .setAddressName(address.getAddressName())
-                                                    .setCountryName(address.getCountryName())
-                                                    .setZipCode(address.getZipCode())
-                                                    .setIsPrincipal(address.getIsPrincipal())
-                                                    .build()
-                                    ).collect(Collectors.toList()
-                                    ))
-                                    .addAllCustomerDocumentDto(customer.getDocuments().stream().map(document ->
-                                                    CustomerDocumentDto.newBuilder()
-                                                            .setDocumentNumber(document.getDocumentNumber())
-                                                            .setDocumentType(document.getDocumentType())
-                                                            .build()
-                                            ).collect(Collectors.toList())
-                                    )
-                                    .setCreationDate(customer.getCreationDate().toString())
-                    ).build();
+            val customerResponse = FindCustomerByIdResponse.newBuilder().setCustomerDto(toDto(customer)).build();
             LOGGER.info("[CustomerServer.findCustomerById] - Found Customer by Id, tracing: " + request.getTracing());
+
             responseObserver.onNext(customerResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
@@ -98,32 +78,11 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
                     ).collect(Collectors.toList()))
                     .build();
             val customer = this.customerService.createCustomer(customerRequest);
-            val customerResponse = CreateCustomerResponse.newBuilder()
-                    .setCustomerDto(
-                            CustomerDto.newBuilder()
-                                    .setId(customer.getId())
-                                    .setName(customer.getName())
-                                    .setLastname(customer.getLastname())
-                                    .addAllCustomerAddressDto(customer.getAddresses().stream().map(address ->
-                                            CustomerAddressDto.newBuilder()
-                                                    .setAddressName(address.getAddressName())
-                                                    .setCountryName(address.getCountryName())
-                                                    .setZipCode(address.getZipCode())
-                                                    .setIsPrincipal(address.getIsPrincipal())
-                                                    .build()
-                                    ).collect(Collectors.toList()
-                                    ))
-                                    .addAllCustomerDocumentDto(customer.getDocuments().stream().map(document ->
-                                                    CustomerDocumentDto.newBuilder()
-                                                            .setDocumentNumber(document.getDocumentNumber())
-                                                            .setDocumentType(document.getDocumentType())
-                                                            .build()
-                                            ).collect(Collectors.toList())
-                                    )
-                                    .setCreationDate(customer.getCreationDate().toString())
-                    ).build();
+            val customerResponse = CreateCustomerResponse.newBuilder().setCustomerDto(toDto(customer)).build();
+
             LOGGER.info("[CustomerServer.createCustomer] - Customer created with Id: " + customer.getId()
                     + ", tracing: " + request.getTracing());
+
             responseObserver.onNext(customerResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
@@ -144,30 +103,10 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
 
             val customers = this.customerService.findAll();
             val customersResponse = FindAllCustomersResponse.newBuilder()
-                    .addAllCustomerDto(
-                            customers.stream().map(customer ->
-                                    CustomerDto.newBuilder()
-                                            .setId(customer.getId())
-                                            .setName(customer.getName())
-                                            .setLastname(customer.getLastname())
-                                            .addAllCustomerAddressDto(customer.getAddresses().stream().map(address ->
-                                                    CustomerAddressDto.newBuilder()
-                                                            .setAddressName(address.getAddressName())
-                                                            .setCountryName(address.getCountryName())
-                                                            .setZipCode(address.getZipCode())
-                                                            .setIsPrincipal(address.getIsPrincipal())
-                                                            .build()
-                                            ).collect(Collectors.toList()))
-                                            .addAllCustomerDocumentDto(customer.getDocuments().stream().map(document ->
-                                                    CustomerDocumentDto.newBuilder()
-                                                            .setDocumentNumber(document.getDocumentNumber())
-                                                            .setDocumentType(document.getDocumentType())
-                                                            .build()
-                                            ).collect(Collectors.toList()))
-                                            .setCreationDate(customer.getCreationDate().toString())
-                                            .build()
-                            ).collect(Collectors.toList())
-                    ).build();
+                    .addAllCustomerDto(customers.stream()
+                            .map(this::toDto)
+                            .collect(Collectors.toList()))
+                    .build();
 
             responseObserver.onNext(customersResponse);
             responseObserver.onCompleted();
@@ -177,6 +116,28 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
                 responseObserver.onError(status.asRuntimeException());
             }
         }
+    }
 
+    private CustomerDto toDto(Customer customer) {
+        return CustomerDto.newBuilder()
+                .setId(customer.getId())
+                .setName(customer.getName())
+                .setLastname(customer.getLastname())
+                .addAllCustomerAddressDto(customer.getAddresses().stream().map(address ->
+                        CustomerAddressDto.newBuilder()
+                                .setAddressName(address.getAddressName())
+                                .setCountryName(address.getCountryName())
+                                .setZipCode(address.getZipCode())
+                                .setIsPrincipal(address.getIsPrincipal())
+                                .build()
+                ).collect(Collectors.toList()))
+                .addAllCustomerDocumentDto(customer.getDocuments().stream().map(document ->
+                        CustomerDocumentDto.newBuilder()
+                                .setDocumentNumber(document.getDocumentNumber())
+                                .setDocumentType(document.getDocumentType())
+                                .build()
+                ).collect(Collectors.toList()))
+                .setCreationDate(customer.getCreationDate().toString())
+                .build();
     }
 }

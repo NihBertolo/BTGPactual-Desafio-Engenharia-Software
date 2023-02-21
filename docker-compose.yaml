@@ -1,0 +1,60 @@
+version: '3.8'
+services:
+  ms-bff:
+    image: nihbertolo97/desafio-engenharia-sofware:btg-ms-bff
+    container_name: ms-backend-for-frontend
+    ports:
+      - "8081:8081"
+    depends_on:
+      - ms-customer
+      - ms-product
+      - ms-payment
+      - ms-order
+  ms-customer:
+    image: nihbertolo97/desafio-engenharia-sofware:btg-ms-customer
+    container_name: ms-customer
+    ports:
+      - "8082:8082"
+      - "4004:4004"
+    depends_on:
+      - mongodb
+  ms-order:
+    image: nihbertolo97/desafio-engenharia-sofware:btg-ms-order
+    container_name: ms-order
+    ports:
+      - "8083:8083"
+      - "4005:4005"
+    depends_on:
+      - mongodb
+      - rabbitmq
+  ms-payment:
+    image: nihbertolo97/desafio-engenharia-sofware:btg-ms-payment
+    container_name: ms-payment
+    ports:
+      - "8084:8084"
+      - "4006:4006"
+    depends_on:
+      - mongodb
+      - rabbitmq
+  ms-product:
+    image: nihbertolo97/desafio-engenharia-sofware:btg-ms-product
+    container_name: ms-product
+    ports:
+      - "8085:8085"
+      - "4007:4007"
+    depends_on:
+      - mongodb
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbit-mq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  mongodb:
+    image: mongo:latest
+    container_name: btg-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: desafio
+      MONGO_INITDB_ROOT_PASSWORD: engenharia

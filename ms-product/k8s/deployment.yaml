@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-product
+  labels:
+    app: ms-product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-product
+  template:
+    metadata:
+      labels:
+        app: ms-product
+    spec:
+      containers:
+        - name: ms-product
+          image: nihbertolo97/desafio-engenharia-sofware:btg-ms-product
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 4007
+              name: grpc
+          env:
+            - name: MONGODB_USER
+              value: desafio
+            - name: MONGODB_PASS
+              value: engenharia
+            - name: MONGODB_HOST
+              value: 0.0.0.0

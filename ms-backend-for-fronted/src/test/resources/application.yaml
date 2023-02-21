@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: MS-BACKEND-FOR-FRONTEND
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+server:
+  port: 8085
+grpc:
+  server:
+    port: 4005
+  clients:
+    customer:
+      address: ms-customer
+      port: 4004
+    order:
+      address: ms-order
+      port: 4005
+    payment:
+      address: ms-payment
+      port: 4006
+    product:
+      address: ms-product
+      port: 4007
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus

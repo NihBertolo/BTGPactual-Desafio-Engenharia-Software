@@ -3,14 +3,15 @@ spring:
     name: MS-ORDER
   data:
     mongodb:
-      user: desafio
-      password: engenharia
+      user: ${MONGODB_USER}
+      password: ${MONGODB_PASS}
       database: desafio_engenharia
-    rabbitmq:
-      host: localhost
-      port: 5672
+      host: ${MONGODB_HOST}
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
 server:
-  port: 8084
+  port: 8080
 rabbitmq:
   queues:
     order-created-payment-queue: "order_created_payment_queue"
@@ -21,14 +22,19 @@ grpc:
     port: 4005
   clients:
     customer:
-      address: localhost
+      address: ms-customer
       port: 4004
     order:
-      address: localhost
+      address: ms-order
       port: 4005
     payment:
-      address: localhost
+      address: ms-payment
       port: 4006
     product:
-      address: localhost
+      address: ms-product
       port: 4007
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,prometheus"

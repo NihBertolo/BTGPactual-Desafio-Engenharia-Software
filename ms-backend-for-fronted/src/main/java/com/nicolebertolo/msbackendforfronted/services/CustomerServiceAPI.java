@@ -21,20 +21,24 @@ public class CustomerServiceAPI {
     @Autowired
     private CustomerServiceGRPC customerServiceGRPC;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     public CustomerResponse findCustomerById(String customerId, String tracing) {
         val customerResponseGRPC = customerServiceGRPC.findCustomerById(customerId, tracing);
+        LOGGER.info("[CustomerServiceAPI.findCustomerById] - Converting gRPC protobuf to Model, tracing: " +tracing);
         return toResponse(customerResponseGRPC.getCustomerDto());
     }
 
     public CustomerResponse createCustomer(CustomerRequest customerRequest, String tracing) {
-        val createCustomer = customerServiceGRPC.createCustomer(customerRequest, tracing);
-        return toResponse(createCustomer.getCustomerDto());
+        val createCustomerGRPC = customerServiceGRPC.createCustomer(customerRequest, tracing);
+        LOGGER.info("[CustomerServiceAPI.createCustomer] - Converting gRPC protobuf to Model, tracing: " +tracing);
+        return toResponse(createCustomerGRPC.getCustomerDto());
     }
 
     public List<CustomerResponse> findAll(String tracing) {
         val customerResponseGRPC = customerServiceGRPC.findAllCustomers(tracing);
-        return customerResponseGRPC.getCustomerDtoList().stream()
-                .map(CustomerResponse::toResponse)
+        LOGGER.info("[CustomerServiceAPI.findAll] - Converting gRPC protobuf to Model, tracing: " +tracing);
+        return customerResponseGRPC.getCustomerDtoList().stream().map(CustomerResponse::toResponse)
                 .collect(Collectors.toList());
     }
 

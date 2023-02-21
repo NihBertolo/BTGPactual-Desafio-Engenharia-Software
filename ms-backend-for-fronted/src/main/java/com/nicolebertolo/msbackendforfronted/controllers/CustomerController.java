@@ -7,6 +7,8 @@ import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
@@ -21,26 +23,28 @@ public class CustomerController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @GetMapping("/{id}")
-    public CustomerResponse findCustomerById(@PathVariable(value = "id") String customerId) {
+    public ResponseEntity<CustomerResponse> findCustomerById(@PathVariable(value = "id") String customerId) {
         LOGGER.info("[CustomerController.findCustomerById] - Controller Request");
         String tracing = UUID.randomUUID().toString();
-        return this.customerServiceAPI.findCustomerById(customerId, tracing);
+        return ResponseEntity.status(HttpStatus.OK).body(this.customerServiceAPI.findCustomerById(customerId, tracing));
     }
 
     @PostMapping
-    public CustomerResponse createCustomer(@RequestBody CustomerRequest customerRequest) {
+    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody CustomerRequest customerRequest) {
         LOGGER.info("[CustomerController.createCustomer] - Controller Request");
         String tracing = UUID.randomUUID().toString();
 
-        return this.customerServiceAPI.createCustomer(customerRequest, tracing);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(this.customerServiceAPI.createCustomer(customerRequest, tracing));
     }
 
     @GetMapping
-    public List<CustomerResponse> findAllCustomers() {
+    public ResponseEntity<List<CustomerResponse>> findAllCustomers() {
         LOGGER.info("[CustomerController.findAllCustomers] - Controller Request");
         val tracing = UUID.randomUUID().toString();
 
-        return this.customerServiceAPI.findAll(tracing);
+        return ResponseEntity.status(HttpStatus.OK).body(this.customerServiceAPI.findAll(tracing));
     }
 
 }

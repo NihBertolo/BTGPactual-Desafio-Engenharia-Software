@@ -36,7 +36,7 @@ public class PaymentService {
 
         val payment = this.paymentRepository.findById(paymentId);
 
-        return payment.orElse(null);
+        return payment.orElseThrow(() -> new PaymentNotFoundException("Payment not found."));
     }
 
     public Payment handlePaymentStatusById(

@@ -70,7 +70,8 @@ public class ProductService {
 
         val product = this.productRepository.findById(productId).orElseThrow(
                 () -> new ProductNotFoundException("Product not found."));
-        Product updatedProduct;
+
+
         if (quantity>=0) LOGGER.info("Increasing Stock...");
 
         val initialQty = product.getStockInfo().getQuantity();
@@ -82,7 +83,7 @@ public class ProductService {
         }
 
         product.getStockInfo().setQuantity(initialQty + quantity);
-        updatedProduct = this.productRepository.save(product);
+        val updatedProduct = this.productRepository.save(product);
 
         LOGGER.info("[ProductService.handleProductStockById] - Stock updated. Initial Quantity:" +initialQty
                 + ", actual quantity: " +updatedProduct.getStockInfo().getQuantity());

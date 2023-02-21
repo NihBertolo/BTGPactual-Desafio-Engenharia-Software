@@ -1,7 +1,9 @@
 package com.nicolebertolo.msproduct.grpc.server;
 
 import com.nicolebertolo.grpc.customerapi.*;
+import com.nicolebertolo.msproduct.domain.models.Product;
 import com.nicolebertolo.msproduct.domain.models.StockInfo;
+import com.nicolebertolo.msproduct.exceptions.handlers.GrpcErrorHandler;
 import com.nicolebertolo.msproduct.grpc.server.request.ProductRequest;
 import com.nicolebertolo.msproduct.services.ProductService;
 import io.grpc.Status;
@@ -26,6 +28,9 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private GrpcErrorHandler grpcErrorHandler;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
@@ -38,31 +43,12 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
 
             val product = this.productService.findProductById(request.getProductId());
 
-            val productResponse = FindProductByIdResponse.newBuilder()
-                    .setProductDto(
-                            ProductDto.newBuilder()
-                                    .setId(product.getId())
-                                    .setDescription(product.getDescription())
-                                    .setName(product.getName())
-                                    .setIdentificationCode(product.getIdentificationCode())
-                                    .setPrice(product.getPrice().doubleValue())
-                                    .setStockInfoDto(
-                                            StockInfoDto.newBuilder()
-                                                    .setQuantity(product.getStockInfo().getQuantity())
-                                                    .setSupplierId(product.getStockInfo().getSupplierId())
-                                                    .build()
-                                    )
-                                    .setCreationDate(product.getCreationDate().toString())
-                                    .build()
-                    ).build();
+            val productResponse = FindProductByIdResponse.newBuilder().setProductDto(toDto(product)).build();
 
             responseObserver.onNext(productResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 
@@ -87,31 +73,12 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
                             ).build()
             );
 
-            val productResponse = CreateProductResponse.newBuilder()
-                    .setProductDto(
-                            ProductDto.newBuilder()
-                                    .setId(product.getId())
-                                    .setDescription(product.getDescription())
-                                    .setName(product.getName())
-                                    .setIdentificationCode(product.getIdentificationCode())
-                                    .setPrice(product.getPrice().doubleValue())
-                                    .setStockInfoDto(
-                                            StockInfoDto.newBuilder()
-                                                    .setQuantity(product.getStockInfo().getQuantity())
-                                                    .setSupplierId(product.getStockInfo().getSupplierId())
-                                                    .build()
-                                    )
-                                    .setCreationDate(product.getCreationDate().toString())
-                                    .build()
-                    ).build();
+            val productResponse = CreateProductResponse.newBuilder().setProductDto(toDto(product)).build();
 
             responseObserver.onNext(productResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 
@@ -126,32 +93,12 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
             val products = this.productService.findAll();
 
             val productsResponse = FindAllProductsResponse.newBuilder()
-                    .addAllProductDto(
-                            products.stream().map(product ->
-                                    ProductDto.newBuilder()
-                                            .setId(product.getId())
-                                            .setDescription(product.getDescription())
-                                            .setName(product.getName())
-                                            .setIdentificationCode(product.getIdentificationCode())
-                                            .setPrice(product.getPrice().doubleValue())
-                                            .setStockInfoDto(
-                                                    StockInfoDto.newBuilder()
-                                                            .setQuantity(product.getStockInfo().getQuantity())
-                                                            .setSupplierId(product.getStockInfo().getSupplierId())
-                                                            .build()
-                                            )
-                                            .setCreationDate(product.getCreationDate().toString())
-                                            .build()
-                            ).collect(Collectors.toList())
-                    ).build();
+                    .addAllProductDto(products.stream().map(this::toDto).collect(Collectors.toList())).build();
 
             responseObserver.onNext(productsResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 
@@ -172,10 +119,24 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
             responseObserver.onNext(productQuantityResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
+    }
+
+    private ProductDto toDto(Product product) {
+        return ProductDto.newBuilder()
+                .setId(product.getId())
+                .setDescription(product.getDescription())
+                .setName(product.getName())
+                .setIdentificationCode(product.getIdentificationCode())
+                .setPrice(product.getPrice().doubleValue())
+                .setStockInfoDto(
+                        StockInfoDto.newBuilder()
+                                .setQuantity(product.getStockInfo().getQuantity())
+                                .setSupplierId(product.getStockInfo().getSupplierId())
+                                .build()
+                )
+                .setCreationDate(product.getCreationDate().toString())
+                .build();
     }
 }

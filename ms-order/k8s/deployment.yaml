@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-order
+  labels:
+    app: ms-order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-order
+  template:
+    metadata:
+      labels:
+        app: ms-order
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+        - name: ms-order
+          image: nihbertolo97/desafio-engenharia-sofware:btg-ms-order
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 4005
+              name: grpc
+          env:
+            - name: MONGODB_USER
+              value: desafio
+            - name: MONGODB_PASS
+              value: engenharia
+            - name: MONGODB_HOST
+              value: 0.0.0.0

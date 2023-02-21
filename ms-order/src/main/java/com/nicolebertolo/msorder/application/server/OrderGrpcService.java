@@ -1,6 +1,8 @@
 package com.nicolebertolo.msorder.application.server;
 
 import com.nicolebertolo.grpc.customerapi.*;
+import com.nicolebertolo.msorder.application.domain.models.Order;
+import com.nicolebertolo.msorder.application.exceptions.handlers.GrpcErrorHandler;
 import com.nicolebertolo.msorder.application.ports.input.grpc.OrderServerUseCase;
 import com.nicolebertolo.msorder.application.service.OrderService;
 import com.nicolebertolo.msorder.infrastructure.adapters.request.OrderRequest;
@@ -24,6 +26,9 @@ public class OrderGrpcService extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private GrpcErrorHandler grpcErrorHandler;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
@@ -35,38 +40,14 @@ public class OrderGrpcService extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
             LOGGER.info("[OrderServer.findCustomerById] - Finding Order by Id, tracing: " + request.getTracing());
 
             val order = this.orderService.findOrderById(request.getOrderId());
-            val orderResponse = FindOrderByIdResponse.newBuilder()
-                    .setOrderDto(
-                            OrderDto.newBuilder()
-                                    .setId(order.getId())
-                                    .setCustomerId(order.getCustomerId())
-                                    .setOrderDetailsDto(
-                                            OrderDetailsDto.newBuilder()
-                                                    .setCustomerAddress(order.getDetails().getCustomerAddress())
-                                                    .setTotalAmount(order.getDetails().getTotalAmount().doubleValue())
-                                                    .addAllProductInfoDto(
-                                                            order.getDetails().getItems().stream().map(item ->
-                                                                    ProductInfoDto.newBuilder()
-                                                                            .setProductId(item.getProductId())
-                                                                            .setPrice(item.getPrice().doubleValue())
-                                                                            .setProductName(item.getProductName())
-                                                                            .build()
-                                                            ).collect(Collectors.toList())
+            val orderResponse = FindOrderByIdResponse.newBuilder().setOrderDto(toDto(order)).build();
 
-                                                    ).build())
-                                    .setStatus(order.getStatus().toString())
-                                    .setCreationDate(order.getCreationDate().toString())
-                                    .build()
-                    ).build();
             LOGGER.info("[OrderServer.findCustomerById] - Order found by Id, tracing: " + request.getTracing());
 
             responseObserver.onNext(orderResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 
@@ -85,37 +66,12 @@ public class OrderGrpcService extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
 
             val order = this.orderService.createOrder(orderRequest, request.getTracing());
 
-            val orderResponse = CreateOrderResponse.newBuilder()
-                    .setOrderDto(
-                            OrderDto.newBuilder()
-                                    .setId(order.getId())
-                                    .setCustomerId(order.getCustomerId())
-                                    .setOrderDetailsDto(
-                                            OrderDetailsDto.newBuilder()
-                                                    .setCustomerAddress(order.getDetails().getCustomerAddress())
-                                                    .setTotalAmount(order.getDetails().getTotalAmount().doubleValue())
-                                                    .addAllProductInfoDto(
-                                                            order.getDetails().getItems().stream().map(item ->
-                                                                    ProductInfoDto.newBuilder()
-                                                                            .setProductId(item.getProductId())
-                                                                            .setPrice(item.getPrice().doubleValue())
-                                                                            .setProductName(item.getProductName())
-                                                                            .build()
-                                                            ).collect(Collectors.toList())
-
-                                                    ).build())
-                                    .setStatus(order.getStatus().toString())
-                                    .setCreationDate(order.getCreationDate().toString())
-                                    .build()
-                    ).build();
+            val orderResponse = CreateOrderResponse.newBuilder().setOrderDto(toDto(order)).build();
 
             responseObserver.onNext(orderResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 
@@ -130,38 +86,35 @@ public class OrderGrpcService extends OrderServiceAPIGrpc.OrderServiceAPIImplBas
         val orders = this.orderService.findAll();
 
         val ordersResponse = FindAllOrdersResponse.newBuilder()
-                        .addAllOrderDto(
-                                orders.stream().map( order ->
-                                        OrderDto.newBuilder()
-                                                .setId(order.getId())
-                                                .setCustomerId(order.getCustomerId())
-                                                .setOrderDetailsDto(
-                                                        OrderDetailsDto.newBuilder()
-                                                                .setCustomerAddress(order.getDetails().getCustomerAddress())
-                                                                .setTotalAmount(order.getDetails().getTotalAmount().doubleValue())
-                                                                .addAllProductInfoDto(
-                                                                        order.getDetails().getItems().stream().map(item ->
-                                                                                ProductInfoDto.newBuilder()
-                                                                                        .setProductId(item.getProductId())
-                                                                                        .setPrice(item.getPrice().doubleValue())
-                                                                                        .setProductName(item.getProductName())
-                                                                                        .build()
-                                                                        ).collect(Collectors.toList())
-
-                                                                ).build())
-                                                .setStatus(order.getStatus().toString())
-                                                .setCreationDate(order.getCreationDate().toString())
-                                                .build()
-                                ).collect(Collectors.toList()
-                        )).build();
+                        .addAllOrderDto(orders.stream().map(this::toDto).collect(Collectors.toList())).build();
 
         responseObserver.onNext(ordersResponse);
         responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
+    }
+
+    private OrderDto toDto(Order order) {
+        return OrderDto.newBuilder()
+                .setId(order.getId())
+                .setCustomerId(order.getCustomerId())
+                .setOrderDetailsDto(
+                        OrderDetailsDto.newBuilder()
+                                .setCustomerAddress(order.getDetails().getCustomerAddress())
+                                .setTotalAmount(order.getDetails().getTotalAmount().doubleValue())
+                                .addAllProductInfoDto(
+                                        order.getDetails().getItems().stream().map(item ->
+                                                ProductInfoDto.newBuilder()
+                                                        .setProductId(item.getProductId())
+                                                        .setPrice(item.getPrice().doubleValue())
+                                                        .setProductName(item.getProductName())
+                                                        .build()
+                                        ).collect(Collectors.toList())
+
+                                ).build())
+                .setStatus(order.getStatus().toString())
+                .setCreationDate(order.getCreationDate().toString())
+                .build();
     }
 }
