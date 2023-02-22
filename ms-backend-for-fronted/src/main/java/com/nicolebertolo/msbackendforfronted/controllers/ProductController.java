@@ -2,6 +2,7 @@ package com.nicolebertolo.msbackendforfronted.controllers;
 
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductRequest;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductResponse;
+import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.TopProductSoldResponse;
 import com.nicolebertolo.msbackendforfronted.services.ProductServiceAPI;
 import lombok.val;
 import org.slf4j.Logger;
@@ -48,5 +49,13 @@ public class ProductController {
         val tracing = UUID.randomUUID().toString();
 
         return ResponseEntity.status(HttpStatus.OK).body(this.productServiceAPI.findAllProducts(tracing));
+    }
+
+    @GetMapping("/most-sold")
+    public ResponseEntity<List<TopProductSoldResponse>> findTopProductsSold() {
+        LOGGER.info("[ProductController.findTopProductsSold] - Controller Request");
+        val tracing = UUID.randomUUID().toString();
+
+        return ResponseEntity.status(HttpStatus.OK).body(this.productServiceAPI.findTopProductsSold(tracing));
     }
 }

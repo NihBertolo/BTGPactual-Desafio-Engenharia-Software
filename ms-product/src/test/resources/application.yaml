@@ -7,11 +7,20 @@ spring:
       password: ${MONGODB_PASS}
       database: desafio_engenharia
       host: ${MONGODB_HOST}
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASS}
+      database: 0
 server:
   port: 8085
 grpc:
   server:
     port: 4007
+  clients:
+    order:
+      address: ms-order
+      port: 4005
 management:
   endpoints:
     enabled-by-default: false

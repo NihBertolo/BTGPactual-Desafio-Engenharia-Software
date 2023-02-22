@@ -24,9 +24,6 @@ grpc:
     customer:
       address: ms-customer
       port: 4004
-    order:
-      address: ms-order
-      port: 4005
     payment:
       address: ms-payment
       port: 4006
@@ -37,4 +34,13 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health,info,metrics,prometheus"
+        include: '*'
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled=: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true

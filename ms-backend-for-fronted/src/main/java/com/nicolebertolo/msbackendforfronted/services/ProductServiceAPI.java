@@ -1,8 +1,11 @@
 package com.nicolebertolo.msbackendforfronted.services;
 
+
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductRequest;
 import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.ProductResponse;
+import com.nicolebertolo.msbackendforfronted.grpc.client.domain.product.TopProductSoldResponse;
 import com.nicolebertolo.msbackendforfronted.grpc.client.service.ProductServiceGRPC;
+import com.nicolebertolo.msbackendforfronted.grpc.client.service.TopProductSoldServiceGRPC;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,9 @@ public class ProductServiceAPI {
 
     @Autowired
     private ProductServiceGRPC productServiceGRPC;
+
+    @Autowired
+    private TopProductSoldServiceGRPC topProductSoldServiceGRPC;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -42,5 +48,13 @@ public class ProductServiceAPI {
         LOGGER.info("[ProductServiceAPI.findAllProducts] - Converting gRPC protobuf to Model, tracing: " +tracing);
 
         return productGRPC.getProductDtoList().stream().map(ProductResponse::toResponse).collect(Collectors.toList());
+    }
+
+    public List<TopProductSoldResponse> findTopProductsSold(String tracing) {
+        val productsCachedGRPC = this.topProductSoldServiceGRPC.findTopProductsSold(tracing);
+        LOGGER.info("[ProductServiceAPI.findTopProductsSold] - Converting gRPC protobuf to Model, tracing: " +tracing);
+
+        return productsCachedGRPC.getTopProductSoldDtoList().stream().map(TopProductSoldResponse::toResponse)
+                .collect(Collectors.toList());
     }
 }

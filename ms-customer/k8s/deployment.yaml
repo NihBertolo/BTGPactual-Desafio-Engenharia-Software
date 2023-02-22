@@ -13,6 +13,10 @@ spec:
     metadata:
       labels:
         app: ms-customer
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/actuator/prometheus"
     spec:
       containers:
         - name: ms-customer

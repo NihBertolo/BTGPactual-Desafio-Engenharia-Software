@@ -22,7 +22,15 @@ grpc:
     port: 4006
 management:
   endpoints:
-    enabled-by-default: false
     web:
       exposure:
-        include: 'info,health,metrics,prometheus'
+        include: '*'
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled=: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
