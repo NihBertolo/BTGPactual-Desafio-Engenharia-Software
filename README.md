@@ -6,7 +6,7 @@
 - [Instalação](#instalaçao)
 - [Arquitetura](#arquitetura)
 - [Modelagem de dados](#modelagem-de-dados)
-- [Casos de uso](#contributing)
+- [Casos de uso](#casos-de-uso)
 - [Observabilidade](#observability)
 - [Implatação na AWS](#implantaçao)
 
@@ -94,3 +94,58 @@ Segue abaixo o diagrama de arquitetura implantada no Cluster Kubernetes:
 * Domínio Produto
 
 ![Product](ms-product/src/main/resources/documentation/datamodeling/product-model.drawio.png)
+
+
+### Casos de uso 
+
+ * Desenho técnico
+
+![Use-case](ms-backend-for-fronted/src/main/resources/diagrams/use-case.png)
+
+
+ * Evidências de teste
+
+    * Cenário 1: Cria Pagamento, Postar compra e Consultar top 5
+
+Com um usuário e 2 produtos previamente cadastrados nos controllers Customer e Product, é montado o seguinte payload para
+criar um novo pedido, nele são inseridos os IDs do cliente e IDs dos produtos, em caso de compra de mais de uma unidade 
+do mesmo item, o ID deve ser inserido N vezes.
+
+![CreateOrder1Request](evidencias/Request CreateOrder.png)
+
+Após a criação do pedido, é retornado no corpo da resposta o objeto resultante e persistido na base de dados, note que jã
+são inseridos as informações que provêm dos IDs inseridos e como quantidade de itens, somatório total do pedido(Domínio produto)
+e endereço de entrega (Domínio Cliente).
+
+![CreateOrder1Response](evidencias/Result CreateOrder.png)
+
+Também é gerado um registro na base do domínio de Pagamentos com o ID do pedido (orderId), que foi estimulado por recebimento de uma fila no RabbitMQ.
+
+![ResultFindAllPayment](evidencias/Request CreateOrder.png)
+
+Já no domínio de produto, a quantidade dos produtos solicitados continua inalteradas até a postagem do pagamento.
+
+![ResultFindAllProducts](evidencias/Result FindAllProducts.png)
+
+
+Para postar um pagamento, é necessário informar o ID do pagamento, o método (PIX / CREDIT_CARD / BANKSLIP) e o Status que será
+trasacionado (PENDING / REFUSED / CONFIRMED / CANCELLED)
+
+![RequestPostPayment](evidencias/Request PostPayment.png)
+
+E em seguida é retornado o pagamento com status realizado
+
+![ResponsePostPayment](evidencias/Result PostPayment.png)
+
+Também são alterados as quantidades disponíveis em estoque dos produtos comprados de acordo com a quantidade do pedido
+
+![ResultFindAllProductsPostPayment](evidencias/Result FindAllProducts post Payment.png)
+
+Além de atualizar o registro do pedido, que foi estimulado por outra mensagem no RabbitMQ para atualizá-lo do status de pagamento.
+
+![ResultOrderPostPayment](evidencias/Result findAllOrder post Payment Confirmed.png)
+
+E por fim, é gerado um cache para consultar os produtos mais vendidos por ordem de maior quantidade vendida.
+
+![Top5Cache](evidencias/Result FindTopSoldProducts post payment.png)
+
