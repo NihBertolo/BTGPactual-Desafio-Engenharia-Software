@@ -1,10 +1,5 @@
 #Prometheus Deploy
 kubectl create configmap prometheus-server-conf --from-file=./deploy/prometheus/k8s/config/prometheus.yml
-#kubectl create -f ./deploy/prometheus/k8s/manifests/clusterRole.yaml
-#kubectl create -f ./deploy/prometheus/k8s/manifests/config-map.yaml
-
-#kubectl create  -f ./deploy/prometheus/k8s/manifests/prometheus-deployment.yaml
-#kubectl create  -f ./deploy/prometheus/k8s/manifests/prometheus-service.yaml
 
 kubectl apply -f ./deploy/prometheus/k8s/deployment.yaml
 kubectl apply -f ./deploy/prometheus/k8s/service.yaml
