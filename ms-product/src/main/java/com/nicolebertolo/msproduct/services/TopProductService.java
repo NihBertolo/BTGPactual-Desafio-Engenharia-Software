@@ -33,7 +33,8 @@ public class TopProductService {
     public List<TopProductSeller> saveCache(String tracing) {
         LOGGER.info("[TopProductService.saveCache] - Start , tracing: " +tracing);
         val ordersGRPC = this.orderServiceGRPC.findAllOrders(tracing)
-                .getOrderDtoList().stream().map(OrderResponse::toResponse).collect(Collectors.toList());
+                .getOrderDtoList().stream().filter(order -> order.getStatus().equals("CONFIRMED"))
+                .map(OrderResponse::toResponse).collect(Collectors.toList());
 
         List<String> productsIds = new ArrayList<>();
 
@@ -56,7 +57,7 @@ public class TopProductService {
             return topProducts;
         }
 
-        for (int i=0; i<=5; i++) {
+        for (int i=0; i<sortedList.size() && i<=5; i++) {
             val product = this.productService.findProductById(sortedList.get(i).getKey());
 
             val topProduct = TopProductSeller.builder()
