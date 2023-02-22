@@ -7,6 +7,11 @@ service ProductServiceAPI {
   rpc FindProductById(FindProductByIdRequest) returns (FindProductByIdResponse) {}
   rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {}
   rpc FindAllProducts(FindAllProductsRequest) returns (FindAllProductsResponse) {}
+  rpc HandleProductQuantity(HandleProductQuantityRequest) returns (HandleProductQuantityResponse) {}
+}
+
+service ProductCacheAPI {
+  rpc FindTopProductsSold(FindTopProductsSoldRequest) returns (FindTopProductsSoldResponse) {}
 }
 
 message FindProductByIdRequest {
@@ -37,6 +42,29 @@ message FindAllProductsRequest {
 
 message FindAllProductsResponse {
   repeated ProductDto product_dto = 1;
+}
+
+message FindTopProductsSoldRequest {
+  string tracing = 1;
+}
+
+message FindTopProductsSoldResponse {
+  repeated TopProductSoldDto top_product_sold_dto = 1;
+}
+message HandleProductQuantityRequest {
+  string product_id = 1;
+  int64 quantity = 2;
+  string tracing = 3;
+}
+
+message HandleProductQuantityResponse {
+  int32 new_quantity = 2;
+}
+
+message TopProductSoldDto {
+  string id = 1;
+  ProductDto product_dto = 2;
+  int32 quantity_sold = 3;
 }
 
 message ProductDto {

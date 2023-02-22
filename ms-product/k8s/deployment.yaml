@@ -13,6 +13,10 @@ spec:
     metadata:
       labels:
         app: ms-product
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/actuator/prometheus"
     spec:
       containers:
         - name: ms-product
@@ -28,4 +32,14 @@ spec:
             - name: MONGODB_PASS
               value: engenharia
             - name: MONGODB_HOST
-              value: 0.0.0.0
+              value: 10.0.0.107
+        - name: sidecar-redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379
+          env:
+            - name: REDIS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: password

@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
-  labels:
-    app: grafana
 spec:
   replicas: 1
   selector:
@@ -19,9 +17,12 @@ spec:
           image: grafana/grafana:latest
           ports:
             - containerPort: 3000
+          env:
+            - name: GF_INSTALL_PLUGINS
+              value: grafana-piechart-panel,grafana-clock-panel,grafana-simple-json-datasource
           volumeMounts:
-            - name: grafana-data
+            - name: grafana-storage
               mountPath: /var/lib/grafana
       volumes:
-        - name: grafana-data
+        - name: grafana-storage
           emptyDir: {}

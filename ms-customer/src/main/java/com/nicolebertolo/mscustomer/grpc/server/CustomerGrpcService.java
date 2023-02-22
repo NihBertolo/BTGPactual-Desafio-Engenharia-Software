@@ -5,6 +5,7 @@ import com.nicolebertolo.grpc.customerapi.*;
 import com.nicolebertolo.mscustomer.domain.models.Address;
 import com.nicolebertolo.mscustomer.domain.models.Customer;
 import com.nicolebertolo.mscustomer.domain.models.CustomerDocument;
+import com.nicolebertolo.mscustomer.exceptions.handlers.GrpcErrorHandler;
 import com.nicolebertolo.mscustomer.grpc.server.request.CustomerRequest;
 import com.nicolebertolo.mscustomer.grpc.server.response.CustomerResponse;
 import com.nicolebertolo.mscustomer.services.CustomerService;
@@ -28,6 +29,9 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private GrpcErrorHandler grpcErrorHandler;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
@@ -45,10 +49,7 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
             responseObserver.onNext(customerResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 
@@ -86,10 +87,7 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
             responseObserver.onNext(customerResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 
@@ -111,10 +109,7 @@ public class CustomerGrpcService extends CustomerServiceAPIGrpc.CustomerServiceA
             responseObserver.onNext(customersResponse);
             responseObserver.onCompleted();
         } catch (StatusRuntimeException ex) {
-            if (ex.getStatus().equals(BAD_REQUEST)) {
-                val status = Status.INVALID_ARGUMENT.withDescription(ex.getMessage());
-                responseObserver.onError(status.asRuntimeException());
-            }
+            responseObserver.onError(grpcErrorHandler.handle(ex));
         }
     }
 

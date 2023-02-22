@@ -7,14 +7,31 @@ spring:
       password: ${MONGODB_PASS}
       database: desafio_engenharia
       host: ${MONGODB_HOST}
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASS}
+      database: 0
 server:
-  port: 8080
+  port: 8082
 grpc:
   server:
     port: 4007
+  clients:
+    order:
+      address: ms-order
+      port: 4005
 management:
   endpoints:
-    enabled-by-default: false
     web:
       exposure:
-        include: 'info,health,metrics,prometheus'
+        include: '*'
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled=: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true

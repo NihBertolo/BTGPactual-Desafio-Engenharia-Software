@@ -3,10 +3,10 @@ kind: Deployment
 metadata:
   name: prometheus
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: prometheus
+  replicas: 1
   template:
     metadata:
       labels:
@@ -14,16 +14,22 @@ spec:
     spec:
       containers:
         - name: prometheus
-          image: prom/prometheus:v2.30.3
+          image: prom/prometheus:latest
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+            - "--web.enable-lifecycle"
           ports:
-            - containerPort: 9090
-              name: http
+            - name: web
+              containerPort: 9090
           volumeMounts:
             - name: prometheus-config
-              mountPath: /etc/prometheus
+              mountPath: /etc/prometheus/
+            - name: prometheus-data
+              mountPath: /prometheus/
       volumes:
         - name: prometheus-config
           configMap:
-            name: prometheus-config
+            name: prometheus-server-conf
+        - name: prometheus-data
+          emptyDir: {}

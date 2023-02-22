@@ -1,7 +1,6 @@
-package com.nicolebertolo.msproduct.grpc.server;
+package com.nicolebertolo.msproduct.exceptions.handlers;
 
 import com.google.rpc.Code;
-import com.google.rpc.ErrorInfo;
 import com.google.rpc.Status;
 import com.nicolebertolo.msproduct.exceptions.ProductNotFoundException;
 import io.grpc.StatusRuntimeException;
@@ -13,12 +12,12 @@ import static io.grpc.protobuf.StatusProto.toStatusRuntimeException;
 @net.devh.boot.grpc.server.advice.GrpcAdvice
 public class GrpcAdvice {
 
-    @GrpcExceptionHandler
-    public StatusRuntimeException handleProductNotFoundException(ProductNotFoundException prdctEx) {
-        val errorInfo = ErrorInfo.newBuilder().setReason(prdctEx.getCause().getMessage()).setDomain("Product").build();
-
-        val status = Status.newBuilder().setCode(Code.INVALID_ARGUMENT_VALUE).setMessage(prdctEx.getMessage()).build();
-
+    @GrpcExceptionHandler(ProductNotFoundException.class)
+    public StatusRuntimeException handleProductNotFoundException(ProductNotFoundException ex) {
+        val status = Status.newBuilder()
+                .setCode(Code.NOT_FOUND_VALUE)
+                .setMessage(ex.getMessage())
+                .build();
         return toStatusRuntimeException(status);
     }
 

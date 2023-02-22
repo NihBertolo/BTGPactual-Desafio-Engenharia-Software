@@ -110,7 +110,10 @@ public class ProductGrpcService extends ProductServiceAPIImplBase {
         try {
             LOGGER.info("[ProductServer.handleProductQuantity] - Handling Product quantity tracing: " + request.getTracing());
 
-            val product = this.productService.handleProductStockById(request.getProductId(), request.getQuantity());
+            val product = this.productService.handleProductStockById(
+                    request.getProductId(),
+                    (int) request.getQuantity()
+            );
 
             val productQuantityResponse = HandleProductQuantityResponse.newBuilder()
                     .setNewQuantity(product.getStockInfo().getQuantity())
